@@ -1,0 +1,14 @@
+{
+  "name": "my-elite-app",
+  "version": "1.0.0",
+  "description": "Built with EliteUI - Vanilla JS Framework",
+  "type": "module",
+  "scripts": {
+    "dev": "npx serve .",
+    "build": "echo 'Build complete'",
+    "preview": "npx serve dist"
+  },
+  "dependencies": {
+    "@odineck/elite-ui": "^1.0.0"
+  }
+}

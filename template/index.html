@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My EliteUI App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body class="bg-white dark:bg-black text-zinc-900 dark:text-zinc-100 min-h-screen">
+
+    <!-- Template: ThemeToggle -->
+    <template id="tmpl-component-theme-toggle">
+        <button 
+            data-onclick="toggle" 
+            class="w-9 h-9 rounded-lg border border-zinc-200 dark:border-zinc-700 flex items-center justify-center transition-colors hover:border-green-600"
+        >
+            <svg 
+                data-show="theme === 'light'" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                stroke-width="2" 
+                class="w-4 h-4"
+            >
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg 
+                data-show="theme === 'dark'" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                stroke-width="2" 
+                class="w-4 h-4"
+            >
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+        </button>
+    </template>
+
+    <!-- Template: Home Page -->
+    <template id="tmpl-page-home">
+        <section class="max-w-6xl mx-auto px-6 py-8">
+            <div class="p-6">
+                <h1 class="text-4xl font-bold mb-4" data-text="title"></h1>
+                <p class="text-zinc-600 dark:text-zinc-400" data-text="subtitle"></p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+                <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5">
+                    <h3 class="font-bold text-sm mb-2">Components</h3>
+                    <p class="text-sm text-zinc-600 dark:text-zinc-400">Create reusable components in <code class="text-xs">components/</code></p>
+                </div>
+                <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5">
+                    <h3 class="font-bold text-sm mb-2">Routing</h3>
+                    <p class="text-sm text-zinc-600 dark:text-zinc-400">Add pages in <code class="text-xs">pages/</code></p>
+                </div>
+                <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5">
+                    <h3 class="font-bold text-sm mb-2">Styling</h3>
+                    <p class="text-sm text-zinc-600 dark:text-zinc-400">Customize in <code class="text-xs">css/main.css</code></p>
+                </div>
+            </div>
+        </section>
+    </template>
+
+    <!-- Header Shell -->
+    <header class="sticky top-0 z-50 bg-white/80 dark:bg-black/80 backdrop-blur-sm border-b border-zinc-200 dark:border-zinc-800">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="#/" class="flex items-center gap-2 font-bold text-xl tracking-tight">
+                <span class="w-2.5 h-2.5 bg-green-600 rounded"></span>
+                My App
+            </a>
+            <div id="component-theme-toggle"></div>
+        </div>
+    </header>
+
+    <!-- Page Outlet -->
+    <main id="page-home"></main>
+
+    <!-- Framework Core -->
+    <script src="https://cdn.jsdelivr.net/npm/@odineck/elite-ui@latest/dist/elite-ui.min.js"></script>
+    
+    <!-- Components -->
+    <script src="components/ThemeToggle/ThemeToggle.js"></script>
+    
+    <!-- Pages -->
+    <script src="pages/home/home.js"></script>
+    
+    <!-- Bootstrap -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Mount ThemeToggle
+            const savedTheme = localStorage.getItem('elite-theme')
+            const themeToggle = new ThemeToggle('#component-theme-toggle', { theme: savedTheme || 'light' })
+            themeToggle.mount()
+            
+            // Mount Home Page
+            const home = new HomePage('#page-home', {
+                title: 'Welcome to EliteUI',
+                subtitle: 'Start building your app by editing components/'
+            })
+            home.mount()
+            
+            console.log('My App Ready')
+        })
+    </script>
+</body>
+</html>

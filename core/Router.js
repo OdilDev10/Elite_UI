@@ -1,431 +1,465 @@
 /**
  * Router
- * Enrutamiento cliente (complementa el router existente si quieres)
- *
- * Uso:
- * const router = new Router()
- * router.on('/users/:id', (params) => { ... })
- * router.navigate('/users/1')
+ * Enrutamiento cliente con layouts, nested routes y guards
+ * 
+ * Usage:
+ * const router = new EliteRouter({
+ *   useHash: true,
+ *   layout: 'default-layout',
+ *   routes: [...]
+ * })
+ * 
+ * Routes:
+ * {
+ *   path: '/admin',
+ *   component: 'AdminPage',
+ *   layout: 'admin-layout',      // override layout
+ *   guards: ['isAuthenticated'], // per-route guards
+ *   meta: { title: 'Admin' },
+ *   children: [                  // nested routes
+ *     { path: 'users', component: 'UsersPage' },
+ *     { path: 'settings', component: 'SettingsPage' }
+ *   ]
+ * }
  */
 
-class Router {
-  constructor(options = {}) {
-    this._routes = new Map()
-    this._paramRoutes = []
-    this._subscribers = []
-    this._currentRoute = null
-    this._basePath = options.basePath || ''
-    this._hash = options.useHash !== false
-
-    this._middleware = []
-    this._guards = []
-    this._history = []
-    this._maxHistory = 50
-
-    this._setup()
-  }
-
-  _setup() {
-    // Listen to hash changes
-    window.addEventListener('hashchange', () => {
-      this._handleRouteChange()
-    })
-
-    // Listen to popstate
-    window.addEventListener('popstate', () => {
-      this._handleRouteChange()
-    })
-
-    // Register as global singleton para data-link directives
-    window.$router = this
-
-    // Initial route
-    this._handleRouteChange()
-  }
-
-  /**
-   * Register route
-   * @param {string} path - '/users' o '/users/:id' o '/users/:id/posts/:postId'
-   * @param {Function|Object} handler
-   */
-  on(path, handler) {
-    // Check if dynamic
-    if (path.includes(':')) {
-      const pattern = this._pathToRegex(path)
-      this._paramRoutes.push({ pattern, path, handler, keys: this._extractKeys(path) })
-    } else {
-      this._routes.set(path, handler)
-    }
-    return this
-  }
-
-  /**
-   * Extract param keys from path
-   */
-  _extractKeys(path) {
-    const regex = /:([a-zA-Z_][a-zA-Z0-9_]*)/g
-    const keys = []
-    let match
-
-    while ((match = regex.exec(path)) !== null) {
-      keys.push(match[1])
+class EliteRouter {
+    constructor(options = {}) {
+        this._routes = []
+        this._routeMap = new Map()
+        this._subscribers = []
+        this._currentRoute = null
+        this._currentLayout = null
+        this._layoutEl = null
+        
+        this._useHash = options.useHash !== false
+        this._basePath = options.basePath || ''
+        this._defaultLayout = options.layout || null
+        this._layouts = new Map()
+        
+        // Global guards
+        this._guards = []
+        this._middleware = []
+        
+        // 404 handler
+        this._notFoundHandler = null
+        
+        this._setup()
     }
 
-    return keys
-  }
-
-  /**
-   * Sanitize route parameter to prevent XSS
-   */
-  _sanitizeRouteParam(value) {
-    if (!value) return ''
-    try {
-      // Decode URI first, then sanitize
-      const decoded = decodeURIComponent(value)
-      // Use DOM API to escape HTML
-      const el = document.createElement('div')
-      el.textContent = decoded
-      return el.innerHTML
-    } catch (e) {
-      // If decoding fails, return the original value escaped
-      const el = document.createElement('div')
-      el.textContent = value
-      return el.innerHTML
-    }
-  }
-
-  /**
-   * Check if path is safe to navigate to (no javascript: etc)
-   */
-  _isSafePath(path) {
-    if (!path || typeof path !== 'string') return false
-    const lower = path.trim().toLowerCase()
-    const dangerousProtocols = ['javascript:', 'data:', 'vbscript:', 'file:']
-    return !dangerousProtocols.some(p => lower.startsWith(p))
-  }
-
-  /**
-   * Convert path pattern to regex
-   */
-  _pathToRegex(path) {
-    const escaped = path.replace(/[.+?^${}()|[\]\\]/g, '\\$&')
-    const withParams = escaped.replace(/:([a-zA-Z_][a-zA-Z0-9_]*)/g, '([^/]+)')
-    return new RegExp(`^${withParams}$`)
-  }
-
-  /**
-   * Parse params from URL
-   */
-  _parseParams(path) {
-    const currentPath = this._getCurrentPath()
-
-    // Exact match
-    if (this._routes.has(path)) {
-      return {}
+    _setup() {
+        window.addEventListener('hashchange', () => this._handleRouteChange())
+        window.addEventListener('popstate', () => this._handleRouteChange())
+        window.$router = this
+        this._handleRouteChange()
     }
 
-    // Dynamic match
-    for (const route of this._paramRoutes) {
-      const match = currentPath.match(route.pattern)
-      if (match) {
+    /**
+     * Register layout component
+     */
+    registerLayout(name, layoutEl) {
+        this._layouts.set(name, layoutEl)
+    }
+
+    /**
+     * Add route
+     */
+    addRoute(route) {
+        this._routes.push(route)
+        this._buildRouteMap()
+        return this
+    }
+
+    /**
+     * Add multiple routes
+     */
+    addRoutes(routes) {
+        this._routes.push(...routes)
+        this._buildRouteMap()
+        return this
+    }
+
+    /**
+     * Build route map for fast lookup
+     */
+    _buildRouteMap() {
+        this._routeMap.clear()
+        
+        const addToMap = (route, parent = null) => {
+            const fullPath = parent 
+                ? `${parent.path}${route.path}` 
+                : route.path
+            
+            this._routeMap.set(fullPath, {
+                ...route,
+                fullPath,
+                parent
+            })
+            
+            // Add children
+            if (route.children) {
+                route.children.forEach(child => addToMap(child, route))
+            }
+        }
+        
+        this._routes.forEach(route => addToMap(route))
+    }
+
+    /**
+     * Set 404 handler
+     */
+    setNotFound(handler) {
+        this._notFoundHandler = handler
+    }
+
+    /**
+     * Navigate to path
+     */
+    async navigate(path, state = {}) {
+        if (!this._isSafePath(path)) {
+            console.warn('[Router] blocked unsafe path:', path)
+            return false
+        }
+
+        // Run global guards
+        for (const guard of this._guards) {
+            const result = await guard(path, this._currentRoute?.fullPath, state)
+            if (result === false) return false
+            if (result !== true && typeof result === 'string') {
+                path = result // Allow guard to redirect
+            }
+        }
+
+        if (this._useHash) {
+            window.location.hash = path
+        } else {
+            window.history.pushState(state, '', path)
+            this._handleRouteChange()
+        }
+        return true
+    }
+
+    /**
+     * Check if path is safe
+     */
+    _isSafePath(path) {
+        if (!path || typeof path !== 'string') return false
+        const dangerous = ['javascript:', 'data:', 'vbscript:', 'file:']
+        return !dangerous.some(p => path.toLowerCase().includes(p))
+    }
+
+    /**
+     * Get current path
+     */
+    _getCurrentPath() {
+        if (this._useHash) {
+            const hash = window.location.hash.slice(1)
+            return hash.startsWith('/') ? hash : '/' + hash
+        }
+        return window.location.pathname
+    }
+
+    /**
+     * Handle route change
+     */
+    async _handleRouteChange() {
+        const path = this._getCurrentPath()
+        const routeInfo = this._matchRoute(path)
+        
+        if (!routeInfo) {
+            this._currentRoute = { path, notFound: true }
+            this._notify(this._currentRoute)
+            this._notFoundHandler?.()
+            return
+        }
+
+        const { route, params, parentRoute } = routeInfo
+
+        // Run route-specific guards
+        if (route.guards) {
+            for (const guardName of route.guards) {
+                const guardFn = this._getGuard(guardName)
+                if (guardFn) {
+                    const result = await guardFn(path, this._currentRoute?.fullPath, params)
+                    if (result === false) {
+                        console.log(`[Router] route guard "${guardName}" blocked`)
+                        return
+                    }
+                }
+            }
+        }
+
+        // Run middleware
+        for (const mw of this._middleware) {
+            await mw(path, params, route.meta)
+        }
+
+        // Update layout
+        const layoutName = route.layout || parentRoute?.layout || this._defaultLayout
+        await this._updateLayout(layoutName)
+
+        // Update route
+        this._currentRoute = {
+            ...route,
+            params,
+            query: this._getQueryParams()
+        }
+
+        // Mount component if exists
+        if (route.component) {
+            this._mountComponent(route)
+        }
+
+        // Notify subscribers
+        this._notify(this._currentRoute)
+    }
+
+    /**
+     * Get guard function by name
+     */
+    _getGuard(name) {
+        // Built-in guards
+        if (name === 'isAuthenticated') {
+            return () => {
+                if (!$permissions?.getCurrentUser()) {
+                    this.navigate('/login')
+                    return false
+                }
+                return true
+            }
+        }
+        if (name === 'isGuest') {
+            return () => {
+                if ($permissions?.getCurrentUser()) {
+                    this.navigate('/')
+                    return false
+                }
+                return true
+            }
+        }
+        if (name === 'isAdmin') {
+            return () => {
+                if (!$permissions?.isRole('admin')) {
+                    this.navigate('/')
+                    return false
+                }
+                return true
+            }
+        }
+        
+        // Custom guard from window
+        if (typeof window[name] === 'function') {
+            return window[name]
+        }
+        
+        return null
+    }
+
+    /**
+     * Mount component to container
+     */
+    _mountComponent(route) {
+        const container = route.container || '#app'
+        const el = document.querySelector(container)
+        if (!el) {
+            console.warn(`[Router] container not found: ${container}`)
+            return
+        }
+
+        const ComponentClass = window[route.component]
+        if (!ComponentClass) {
+            console.warn(`[Router] component not found: ${route.component}`)
+            return
+        }
+
+        // Pass params and query
+        const props = { 
+            ...route.params,
+            ...(route.props || {}),
+            query: this._getQueryParams()
+        }
+
+        // Mount
+        const instance = new ComponentClass(container, props)
+        instance.mount()
+        
+        // Store for cleanup
+        if (!this._currentInstance) {
+            this._currentInstance = instance
+        }
+    }
+
+    /**
+     * Update layout
+     */
+    async _updateLayout(layoutName) {
+        if (this._currentLayout === layoutName) return
+        
+        if (!layoutName) {
+            this._layoutEl = null
+            this._currentLayout = null
+            return
+        }
+
+        const layoutEl = this._layouts.get(layoutName)
+        if (!layoutEl) {
+            // Try to find element with id
+            const el = document.querySelector(`#${layoutName}`)
+            if (el) {
+                this._layoutEl = el
+                this._currentLayout = layoutName
+            }
+            return
+        }
+
+        this._layoutEl = layoutEl
+        this._currentLayout = layoutName
+    }
+
+    /**
+     * Match route to path
+     */
+    _matchRoute(path) {
+        // Clean path
+        path = path.split('?')[0]
+        
+        // Check exact match first
+        const exact = this._routeMap.get(path)
+        if (exact) return { route: exact, params: {}, parentRoute: exact.parent }
+
+        // Check with trailing slash
+        if (path.endsWith('/') && path !== '/') {
+            const withoutSlash = path.slice(0, -1)
+            const match = this._routeMap.get(withoutSlash)
+            if (match) return { route: match, params: {}, parentRoute: match.parent }
+        }
+
+        // Check dynamic routes
+        for (const [routePath, routeInfo] of this._routeMap) {
+            const params = this._matchDynamicRoute(routePath, path)
+            if (params) {
+                return { 
+                    route: routeInfo, 
+                    params, 
+                    parentRoute: routeInfo.parent 
+                }
+            }
+        }
+
+        return null
+    }
+
+    /**
+     * Match dynamic route
+     */
+    _matchDynamicRoute(pattern, path) {
+        const patternParts = pattern.split('/').filter(Boolean)
+        const pathParts = path.split('/').filter(Boolean)
+
+        if (patternParts.length !== pathParts.length) return null
+
         const params = {}
-        route.keys.forEach((key, i) => {
-          // Sanitize route params to prevent XSS
-          params[key] = this._sanitizeRouteParam(match[i + 1])
+        for (let i = 0; i < patternParts.length; i++) {
+            const p = patternParts[i]
+            const a = pathParts[i]
+
+            if (p.startsWith(':')) {
+                params[p.slice(1)] = this._sanitizeParam(a)
+            } else if (p !== a) {
+                return null
+            }
+        }
+
+        return params
+    }
+
+    /**
+     * Sanitize route param
+     */
+    _sanitizeParam(value) {
+        try {
+            const el = document.createElement('div')
+            el.textContent = decodeURIComponent(value)
+            return el.innerHTML
+        } catch {
+            return value
+        }
+    }
+
+    /**
+     * Get query params
+     */
+    _getQueryParams() {
+        const search = this._useHash
+            ? window.location.hash.split('?')[1] || ''
+            : window.location.search.slice(1)
+        
+        if (!search) return {}
+        
+        const params = {}
+        search.split('&').slice(0, 50).forEach(pair => {
+            const [key, value = ''] = pair.split('=')
+            if (key) {
+                params[decodeURIComponent(key)] = decodeURIComponent(value.slice(0, 2000))
+            }
         })
         return params
-      }
     }
 
-    return null
-  }
-
-  /**
-   * Get current path from URL/hash
-   */
-  _getCurrentPath() {
-    if (this._hash) {
-      const hash = window.location.hash.slice(1)
-      return hash.startsWith('/') ? hash : '/' + hash
-    } else {
-      return window.location.pathname
-    }
-  }
-
-  /**
-   * Navigate
-   * @param {string} path
-   * @param {Object} state
-   */
-  async navigate(path, state = {}) {
-    // Security: block dangerous protocols
-    if (!this._isSafePath(path)) {
-      console.warn('[Router] blocked navigation to unsafe path:', path)
-      return false
-    }
-
-    // Guards
-    for (const guard of this._guards) {
-      const canNavigate = await guard(path, this._currentRoute?.path, state)
-      if (!canNavigate) {
-        console.log('[Router] navigation blocked by guard')
-        return false
-      }
-    }
-
-    // Middleware
-    for (const mw of this._middleware) {
-      await mw(path, state)
-    }
-
-    // Update URL
-    if (this._hash) {
-      window.location.hash = path
-    } else {
-      window.history.pushState(state, '', path)
-      this._handleRouteChange()
-    }
-
-    return true
-  }
-
-  /**
-   * Handle route change
-   */
-  _handleRouteChange() {
-    const path = this._getCurrentPath()
-
-    // Check if already on this route
-    if (this._currentRoute?.path === path) return
-
-    // Find handler
-    let handler = this._routes.get(path)
-    let params = {}
-    let matched = false
-
-    if (handler) {
-      matched = true
-    } else {
-      // Try dynamic routes
-      for (const route of this._paramRoutes) {
-        const match = path.match(route.pattern)
-        if (match) {
-          handler = route.handler
-          matched = true
-          route.keys.forEach((key, i) => {
-            params[key] = match[i + 1]
-          })
-          break
+    /**
+     * Subscribe to route changes
+     */
+    subscribe(callback) {
+        this._subscribers.push(callback)
+        return () => {
+            this._subscribers = this._subscribers.filter(cb => cb !== callback)
         }
-      }
     }
 
-    if (!matched) {
-      // 404
-      this._currentRoute = { path, notFound: true }
-      this._notify({ path, notFound: true })
-      return
+    _notify(route) {
+        this._subscribers.forEach(cb => cb(route))
     }
 
-    // Call handler
-    this._currentRoute = { path, params, handler }
-
-    try {
-      if (typeof handler === 'function') {
-        handler(params)
-      } else if (handler && typeof handler.load === 'function') {
-        // Component-like handler
-        handler.load(params)
-      }
-    } catch (e) {
-      console.error('[Router] handler error:', e)
+    /**
+     * Add global guard
+     */
+    beforeEach(guard) {
+        this._guards.push(guard)
+        return () => {
+            this._guards = this._guards.filter(g => g !== guard)
+        }
     }
 
-    // Add to history
-    this._history.push({
-      timestamp: Date.now(),
-      path,
-      params
-    })
-    if (this._history.length > this._maxHistory) {
-      this._history.shift()
+    /**
+     * Add middleware
+     */
+    use(middleware) {
+        this._middleware.push(middleware)
+        return () => {
+            this._middleware = this._middleware.filter(m => m !== middleware)
+        }
     }
 
-    // Notify
-    this._notify(this._currentRoute)
-  }
-
-  /**
-   * Subscribe to route changes
-   */
-  subscribe(callback) {
-    this._subscribers.push(callback)
-    return () => {
-      this._subscribers = this._subscribers.filter(cb => cb !== callback)
-    }
-  }
-
-  _notify(route) {
-    this._subscribers.forEach(cb => {
-      try {
-        cb(route)
-      } catch (e) {
-        console.error('[Router] subscriber error:', e)
-      }
-    })
-  }
-
-  /**
-   * Add navigation guard
-   */
-  beforeEach(guard) {
-    this._guards.push(guard)
-    return () => {
-      this._guards = this._guards.filter(g => g !== guard)
-    }
-  }
-
-  /**
-   * Add middleware
-   */
-  use(middleware) {
-    this._middleware.push(middleware)
-    return () => {
-      this._middleware = this._middleware.filter(m => m !== middleware)
-    }
-  }
-
-  /**
-   * Get current route
-   */
-  getCurrentRoute() {
-    return this._currentRoute
-  }
-
-  /**
-   * Get history
-   */
-  getHistory() {
-    return [...this._history]
-  }
-
-  /**
-   * Back
-   */
-  back() {
-    window.history.back()
-  }
-
-  /**
-   * Forward
-   */
-  forward() {
-    window.history.forward()
-  }
-
-  /**
-   * Get query params from current URL
-   * /users?page=1&sort=name → { page: '1', sort: 'name' }
-   * Security: limits params to prevent DoS
-   */
-  getQueryParams() {
-    const searchStr = this._hash
-      ? window.location.hash.split('?')[1] || ''
-      : window.location.search.slice(1)
-
-    if (!searchStr) return {}
-
-    const params = {}
-    const pairs = searchStr.split('&')
-    const MAX_PARAMS = 50
-    const MAX_KEY_LENGTH = 100
-    const MAX_VALUE_LENGTH = 2000
-
-    for (let i = 0; i < pairs.length && i < MAX_PARAMS; i++) {
-      const pair = pairs[i]
-      const [key, value] = pair.split('=')
-      if (key && key.length <= MAX_KEY_LENGTH) {
-        const decodedKey = decodeURIComponent(key)
-        const decodedValue = value ? decodeURIComponent(value) : ''
-        // Limit value length
-        params[decodedKey] = decodedValue.slice(0, MAX_VALUE_LENGTH)
-      }
+    /**
+     * Get current route
+     */
+    getCurrentRoute() {
+        return this._currentRoute
     }
 
-    return params
-  }
-
-  /**
-   * Set query params (replaces existing)
-   * router.setQueryParams({ page: 2, sort: 'date' })
-   */
-  setQueryParams(queryParams) {
-    const path = this._getCurrentPath()
-    const queryStr = this._buildQueryString(queryParams)
-    const newUrl = queryStr ? `${path}?${queryStr}` : path
-
-    if (this._hash) {
-      window.location.hash = newUrl
-    } else {
-      window.history.pushState({}, '', newUrl)
-      this._handleRouteChange()
-    }
-  }
-
-  /**
-   * Update specific query param (merges with existing)
-   * router.updateQueryParam('page', 2)
-   * router.updateQueryParam({ page: 2, sort: 'date' })
-   */
-  updateQueryParam(keyOrObj, value = null) {
-    const current = this.getQueryParams()
-    let updates = {}
-
-    if (typeof keyOrObj === 'string') {
-      updates[keyOrObj] = value
-    } else {
-      updates = keyOrObj
+    /**
+     * Back
+     */
+    back() {
+        window.history.back()
     }
 
-    const merged = { ...current, ...updates }
-    this.setQueryParams(merged)
-  }
-
-  /**
-   * Remove query param
-   * router.removeQueryParam('page')
-   */
-  removeQueryParam(key) {
-    const current = this.getQueryParams()
-    delete current[key]
-    this.setQueryParams(current)
-  }
-
-  /**
-   * Build query string from object
-   */
-  _buildQueryString(params) {
-    const pairs = []
-    for (const [key, value] of Object.entries(params)) {
-      if (value !== null && value !== undefined) {
-        pairs.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-      }
+    /**
+     * Forward
+     */
+    forward() {
+        window.history.forward()
     }
-    return pairs.join('&')
-  }
-
-  /**
-   * Debug
-   */
-  debug() {
-    console.group('[Router]')
-    console.log('Current route:', this._currentRoute)
-    console.log('Query params:', this.getQueryParams())
-    console.log('Routes:', this._routes.size)
-    console.log('Dynamic routes:', this._paramRoutes.length)
-    console.log('History:', this._history.length)
-    console.groupEnd()
-  }
 }
 
-window.Router = Router
+window.EliteRouter = EliteRouter

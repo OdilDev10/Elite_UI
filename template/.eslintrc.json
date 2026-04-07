@@ -1,0 +1,43 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "node": true
+    },
+    "extends": [
+        "eslint:recommended"
+    ],
+    "parserOptions": {
+        "ecmaVersion": 2022,
+        "sourceType": "module"
+    },
+    "rules": {
+        "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+        "no-console": "off",
+        "semi": ["error", "always"],
+        "quotes": ["error", "single", { "avoidEscape": true }],
+        "indent": ["error", 4],
+        "comma-dangle": ["error", "never"],
+        "eqeqeq": ["error", "always"],
+        "no-var": "error",
+        "prefer-const": "warn",
+        "no-undef": "off"
+    },
+    "globals": {
+        "SimpleComponent": "readonly",
+        "Router": "readonly",
+        "$http": "readonly",
+        "HttpClient": "readonly",
+        "$env": "readonly",
+        "$permissions": "readonly",
+        "$i18n": "readonly",
+        "$t": "readonly",
+        "createStore": "readonly",
+        "api": "readonly",
+        "auth": "readonly",
+        "cart": "readonly",
+        "localStorage": "readonly",
+        "sessionStorage": "readonly",
+        "CustomEvent": "readonly"
+    }
+}

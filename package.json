@@ -1,16 +1,23 @@
 {
   "name": "@odineck/elite-ui",
   "version": "1.0.0",
+  "type": "module",
   "description": "Production-ready vanilla JavaScript framework - zero runtime dependencies",
   "main": "core/index.js",
   "module": "core/index.js",
   "files": [
     "core",
     "dist",
+    "template",
+    "scripts/create.js",
     "README.md"
   ],
+  "bin": {
+    "create-elite-ui": "./scripts/create.js"
+  },
   "scripts": {
-    "bundle": "node scripts/bundle.js",
+    "create": "node scripts/create.js",
+    "bundle": "node scripts/bundle.cjs",
     "test": "echo 'Tests coming soon'"
   },
   "keywords": [

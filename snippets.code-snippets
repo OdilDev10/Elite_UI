@@ -1,0 +1,758 @@
+{
+    "EliteUI Component": {
+        "prefix": "elite-component",
+        "description": "Create a new EliteUI component extending SimpleComponent",
+        "body": [
+            "class ${1:Name} extends SimpleComponent {",
+            "    constructor(selector, props = {}) {",
+            "        super(selector, {",
+            "            ${2:prop}: ${3:value},",
+            "            ...props",
+            "        })",
+            "        this._props = { ...props }",
+            "    }",
+            "",
+            "    render() {",
+            "        if (!this.el) return",
+            "        this.el.innerHTML = this.loadTemplate('${4:${1:name}}')",
+            "    }",
+            "}",
+            "",
+            "window.${1:Name} = ${1:Name}"
+        ]
+    },
+    "EliteUI Page Component": {
+        "prefix": "elite-page",
+        "description": "Create a new EliteUI page component",
+        "body": [
+            "class ${1:Name}Page extends SimpleComponent {",
+            "    constructor(selector, props = {}) {",
+            "        super(selector, {",
+            "            ${2:data}: ${3:value},",
+            "            ...props,",
+            "        })",
+            "        this._props = { ...props }",
+            "    }",
+            "",
+            "    onMount() {",
+            "        ${5:// init page}",
+            "    }",
+            "",
+            "    render() {",
+            "        if (!this.el) return",
+            "        this.el.innerHTML = this.loadTemplate('${4:page-${1:name}}')",
+            "    }",
+            "}",
+            "",
+            "window.${1:Name}Page = ${1:Name}Page"
+        ]
+    },
+    "EliteUI Stateful Component": {
+        "prefix": "elite-stateful",
+        "description": "Create an EliteUI component with reactive state",
+        "body": [
+            "class ${1:Name} extends SimpleComponent {",
+            "    constructor(selector, props = {}) {",
+            "        super(selector, {",
+            "            ${2:count}: 0,",
+            "            ${3:loading}: false,",
+            "            ...props,",
+            "        })",
+            "    }",
+            "",
+            "    increment() {",
+            "        this.setState(prev => ({ count: prev.count + 1 }))",
+            "    }",
+            "",
+            "    decrement() {",
+            "        this.setState(prev => ({ count: Math.max(0, prev.count - 1) }))",
+            "    }",
+            "",
+            "    render() {",
+            "        if (!this.el) return",
+            "        this.el.innerHTML = this.loadTemplate('${4:${1:name}}')",
+            "    }",
+            "}",
+            "",
+            "window.${1:Name} = ${1:Name}"
+        ]
+    },
+    "EliteUI Form Component": {
+        "prefix": "elite-form",
+        "description": "Create an EliteUI form component with validation",
+        "body": [
+            "class ${1:Name}Form extends SimpleComponent {",
+            "    constructor(selector, props = {}) {",
+            "        super(selector, {",
+            "            fields: {},",
+            "            errors: {},",
+            "            submitting: false,",
+            "            ...props,",
+            "        })",
+            "        this._props = { onSubmit: null, ...props }",
+            "    }",
+            "",
+            "    validate(field, value) {",
+            "        return $validators.required(value)",
+            "    }",
+            "",
+            "    handleInput(e) {",
+            "        const { name, value } = e.target",
+            "        this.setState({",
+            "            fields: { ...this._state.fields, [name]: value },",
+            "            errors: { ...this._state.errors, [name]: null },",
+            "        })",
+            "    }",
+            "",
+            "    async handleSubmit(e) {",
+            "        e.preventDefault()",
+            "        const { fields } = this._state",
+            "        const errors = {}",
+            "",
+            "        Object.keys(fields).forEach(key => {",
+            "            const error = this.validate(key, fields[key])",
+            "            if (error) errors[key] = error",
+            "        })",
+            "",
+            "        if (Object.keys(errors).length > 0) {",
+            "            this.setState({ errors })",
+            "            return",
+            "        }",
+            "",
+            "        this.setState({ submitting: true })",
+            "        try {",
+            "            await this._props.onSubmit?.(fields)",
+            "        } finally {",
+            "            this.setState({ submitting: false })",
+            "        }",
+            "    }",
+            "",
+            "    render() {",
+            "        if (!this.el) return",
+            "        this.el.innerHTML = this.loadTemplate('${4:form-${1:name}}')",
+            "    }",
+            "}",
+            "",
+            "window.${1:Name}Form = ${1:Name}Form"
+        ]
+    },
+    "EliteUI List Component": {
+        "prefix": "elite-list",
+        "description": "Create an EliteUI component for rendering lists",
+        "body": [
+            "class ${1:Name}List extends SimpleComponent {",
+            "    constructor(selector, props = {}) {",
+            "        super(selector, {",
+            "            items: [],",
+            "            loading: false,",
+            "            emptyMessage: 'No items found',",
+            "            ...props,",
+            "        })",
+            "    }",
+            "",
+            "    async loadItems() {",
+            "        this.setState({ loading: true })",
+            "        try {",
+            "            const items = await ${2:this.fetchItems}()",
+            "            this.setState({ items, loading: false })",
+            "        } catch (err) {",
+            "            this.setState({ loading: false })",
+            "            this._handleError(err)",
+            "        }",
+            "    }",
+            "",
+            "    render() {",
+            "        if (!this.el) return",
+            "        this.el.innerHTML = this.loadTemplate('${3:list-${1:name}}')",
+            "    }",
+            "}",
+            "",
+            "window.${1:Name}List = ${1:Name}List"
+        ]
+    },
+    "EliteUI Modal Component": {
+        "prefix": "elite-modal",
+        "description": "Create an EliteUI modal component",
+        "body": [
+            "class ${1:Name}Modal extends SimpleComponent {",
+            "    constructor(selector, props = {}) {",
+            "        super(selector, {",
+            "            open: false,",
+            "            title: '${2:Modal Title}',",
+            "            ...props,",
+            "        })",
+            "        this._props = { onClose: null, ...props }",
+            "    }",
+            "",
+            "    open() {",
+            "        this.setState({ open: true })",
+            "        document.body.style.overflow = 'hidden'",
+            "    }",
+            "",
+            "    close() {",
+            "        this.setState({ open: false })",
+            "        document.body.style.overflow = ''",
+            "        this._props.onClose?.()",
+            "    }",
+            "",
+            "    handleBackdropClick(e) {",
+            "        if (e.target === e.currentTarget) this.close()",
+            "    }",
+            "",
+            "    handleKeydown(e) {",
+            "        if (e.key === 'Escape') this.close()",
+            "    }",
+            "",
+            "    render() {",
+            "        if (!this.el) return",
+            "        this.el.innerHTML = this.loadTemplate('${3:modal-${1:name}}')",
+            "    }",
+            "}",
+            "",
+            "window.${1:Name}Modal = ${1:Name}Modal"
+        ]
+    },
+    "EliteUI Service": {
+        "prefix": "elite-service",
+        "description": "Create a new EliteUI service class",
+        "body": [
+            "class ${1:Name}Service {",
+            "    constructor() {",
+            "        this._baseUrl = $env.get('${2:API_URL}', '')",
+            "        this._http = $http.create({ baseUrl: this._baseUrl })",
+            "    }",
+            "",
+            "    async getAll() {",
+            "        return this._http.get('${3:/endpoint}')",
+            "    }",
+            "",
+            "    async getById(id) {",
+            "        return this._http.get(`${3:/endpoint}/${id}`)",
+            "    }",
+            "",
+            "    async create(data) {",
+            "        return this._http.post('${3:/endpoint}', data)",
+            "    }",
+            "",
+            "    async update(id, data) {",
+            "        return this._http.put(`${3:/endpoint}/${id}`, data)",
+            "    }",
+            "",
+            "    async delete(id) {",
+            "        return this._http.delete(`${3:/endpoint}/${id}`)",
+            "    }",
+            "}",
+            "",
+            "const ${1:name}Service = new ${1:Name}Service()",
+            "export { ${1:name}Service }"
+        ]
+    },
+    "EliteUI Store": {
+        "prefix": "elite-store",
+        "description": "Create a new EliteUI reactive store",
+        "body": [
+            "class ${1:Name}Store extends SimpleStore {",
+            "    constructor() {",
+            "        super({",
+            "            ${2:items}: [],",
+            "            ${3:loading}: false,",
+            "            ${4:error}: null,",
+            "        })",
+            "    }",
+            "",
+            "    async fetchItems() {",
+            "        this.setState({ loading: true, error: null })",
+            "        try {",
+            "            const items = await $http.get('${5:/api/items}')",
+            "            this.setState({ items, loading: false })",
+            "        } catch (err) {",
+            "            this.setState({ error: err.message, loading: false })",
+            "        }",
+            "    }",
+            "",
+            "    addItem(item) {",
+            "        const items = [...this._state.items, item]",
+            "        this.setState({ items })",
+            "    },",
+            "",
+            "    removeItem(id) {",
+            "        const items = this._state.items.filter(i => i.id !== id)",
+            "        this.setState({ items })",
+            "    },",
+            "}",
+            "",
+            "const ${1:name}Store = new ${1:Name}Store()",
+            "export { ${1:name}Store }"
+        ]
+    },
+    "EliteUI Router Setup": {
+        "prefix": "elite-router-init",
+        "description": "Initialize EliteUI Router with hash navigation",
+        "body": [
+            "const router = new EliteRouter({",
+            "    useHash: true,",
+            "    layout: '${1:main-layout}',",
+            "})",
+            "",
+            "router.addRoutes([",
+            "    {",
+            "        path: '/',",
+            "        component: '${2:HomePage}',",
+            "        container: '#app',",
+            "        meta: { title: '${3:Home}' },",
+            "    },",
+            "    {",
+            "        path: '/${4:route}',",
+            "        component: '${5:Page}',",
+            "        container: '#app',",
+            "        guards: ['${6:isAuthenticated}'],",
+            "        meta: { title: '${7:Page Title}' },",
+            "    },",
+            "])",
+            "",
+            "window.$router = router"
+        ]
+    },
+    "EliteUI Route Definition": {
+        "prefix": "elite-route",
+        "description": "Add a route definition to router",
+        "body": [
+            "{",
+            "    path: '/${1:route}',",
+            "    component: '${2:ComponentName}',",
+            "    container: '#${3:page-${1:route}}',",
+            "    meta: { title: '${4:Title}' },",
+            "    guards: [${5:'isAuthenticated'}],",
+            "    children: [${6}]",
+            "},"
+        ]
+    },
+    "EliteUI Guard": {
+        "prefix": "elite-guard",
+        "description": "Create a route guard function",
+        "body": [
+            "function ${1:name}Guard(path, from, params) {",
+            "    const user = $permissions?.getCurrentUser()",
+            "    if (!user) {",
+            "        $router.navigate('/login')",
+            "        return false",
+            "    }",
+            "    return true",
+            "}",
+            "",
+            "window.${1:name}Guard = ${1:name}Guard"
+        ]
+    },
+    "EliteUI Middleware": {
+        "prefix": "elite-middleware",
+        "description": "Create a router middleware function",
+        "body": [
+            "async function ${1:name}Middleware(path, params, meta) {",
+            "    ${2:// logic before route loads}",
+            "    $debug?.log('[${1:name}] path:', path)",
+            "}",
+            "",
+            "window.${1:name}Middleware = ${1:name}Middleware"
+        ]
+    },
+    "EliteUI Layout": {
+        "prefix": "elite-layout",
+        "description": "Create an EliteUI layout component",
+        "body": [
+            "class ${1:Name}Layout extends SimpleComponent {",
+            "    constructor(selector, props = {}) {",
+            "        super(selector, {",
+            "            title: '${2:Page Title}',",
+            "            ...props,",
+            "        })",
+            "    }",
+            "",
+            "    render() {",
+            "        if (!this.el) return",
+            "        this.el.innerHTML = this.loadTemplate('${3:layout-${1:name}}')",
+            "    }",
+            "",
+            "    onMount() {",
+            "        $router?.registerLayout('${4:${1:name}}', this.el)",
+            "    }",
+            "}",
+            "",
+            "window.${1:Name}Layout = ${1:Name}Layout"
+        ]
+    },
+    "EliteUI Template": {
+        "prefix": "elite-template",
+        "description": "Create an HTML template element for components",
+        "body": [
+            "<template id=\"tmpl-${1:component}\">",
+            "    <div class=\"${2:p-4 bg-white dark:bg-zinc-900}\">",
+            "        <h2 data-text=\"${3:title}\"></h2>",
+            "        <p data-text=\"${4:description}\"></p>",
+            "    </div>",
+            "</template>"
+        ]
+    },
+    "EliteUI Component Mount": {
+        "prefix": "elite-mount",
+        "description": "Mount an EliteUI component",
+        "body": [
+            "const ${1:component} = new ${2:ComponentName}('#${3:element-id}', {",
+            "    ${4:prop}: ${5:value},",
+            "})",
+            "${1:component}.mount()"
+        ]
+    },
+    "EliteUI useEffect": {
+        "prefix": "elite-effect",
+        "description": "Add a side effect to component",
+        "body": [
+            "this.useEffect(() => {",
+            "    ${1:// effect logic}",
+            "    return () => { ${2:// cleanup } }",
+            "}, [${3:dependencies}])"
+        ]
+    },
+    "EliteUI Child Component Registration": {
+        "prefix": "elite-child",
+        "description": "Register and mount a child component",
+        "body": [
+            "const ${1:child} = this.registerChild(",
+            "    new ${2:ChildComponent}('#${3:container}', ${4:{}})",
+            ")",
+            "${1:child}.mount()"
+        ]
+    },
+    "EliteUI Event Emission": {
+        "prefix": "elite-emit",
+        "description": "Emit a custom event from component",
+        "body": [
+            "this.emit('${1:eventName}', {",
+            "    ${2:detail}: ${3:value},",
+            "})"
+        ]
+    },
+    "EliteUI Lazy Load": {
+        "prefix": "elite-lazy",
+        "description": "Lazy load a resource in component",
+        "body": [
+            "async ${1:loadResource}() {",
+            "    const data = await this.lazyLoad('${2:resourceId}', async () => {",
+            "        return await $http.get('${3:/api/resource}')",
+            "    })",
+            "    return data",
+            "}"
+        ]
+    },
+    "EliteUI Error Boundary": {
+        "prefix": "elite-error-boundary",
+        "description": "Set error boundary handler",
+        "body": [
+            "this.setErrorBoundary((error, component) => {",
+            "    $debug?.error('[${1:Component}] error:', error)",
+            "    this.setState({ ${2:hasError}: true })",
+            "})"
+        ]
+    },
+    "EliteUI Directive data-text": {
+        "prefix": "elite-d-text",
+        "description": "Add data-text directive for text binding",
+        "body": [
+            "data-text=\"${1:key}\""
+        ]
+    },
+    "EliteUI Directive data-html": {
+        "prefix": "elite-d-html",
+        "description": "Add data-html directive for HTML binding (XSS safe)",
+        "body": [
+            "data-html=\"${1:key}\""
+        ]
+    },
+    "EliteUI Directive data-show": {
+        "prefix": "elite-d-show",
+        "description": "Add data-show directive (visibility)",
+        "body": [
+            "data-show=\"${1:condition}\""
+        ]
+    },
+    "EliteUI Directive data-if": {
+        "prefix": "elite-d-if",
+        "description": "Add data-if directive (display)",
+        "body": [
+            "data-if=\"${1:condition}\""
+        ]
+    },
+    "EliteUI Directive data-bind": {
+        "prefix": "elite-d-bind",
+        "description": "Add data-bind directive (two-way binding)",
+        "body": [
+            "data-bind=\"${1:fieldName}\""
+        ]
+    },
+    "EliteUI Directive data-onclick": {
+        "prefix": "elite-d-click",
+        "description": "Add data-onclick directive",
+        "body": [
+            "data-onclick=\"${1:methodName}\""
+        ]
+    },
+    "EliteUI Directive data-onchange": {
+        "prefix": "elite-d-change",
+        "description": "Add data-onchange directive",
+        "body": [
+            "data-onchange=\"${1:handleChange}\""
+        ]
+    },
+    "EliteUI Directive data-oninput": {
+        "prefix": "elite-d-input",
+        "description": "Add data-oninput directive",
+        "body": [
+            "data-oninput=\"${1:handleInput}\""
+        ]
+    },
+    "EliteUI Directive data-onsubmit": {
+        "prefix": "elite-d-submit",
+        "description": "Add data-onsubmit directive for forms",
+        "body": [
+            "data-onsubmit=\"${1:handleSubmit}\""
+        ]
+    },
+    "EliteUI Directive data-onkeyup": {
+        "prefix": "elite-d-keyup",
+        "description": "Add data-onkeyup directive",
+        "body": [
+            "data-onkeyup=\"${1:handleKeyup}\""
+        ]
+    },
+    "EliteUI Directive data-onkeydown": {
+        "prefix": "elite-d-keydown",
+        "description": "Add data-onkeydown directive",
+        "body": [
+            "data-onkeydown=\"${1:handleKeydown}\""
+        ]
+    },
+    "EliteUI Directive data-onhover": {
+        "prefix": "elite-d-hover",
+        "description": "Add data-onhover directive",
+        "body": [
+            "data-onhover=\"${1:handleHover}\""
+        ]
+    },
+    "EliteUI Directive data-onfocus": {
+        "prefix": "elite-d-focus",
+        "description": "Add data-onfocus directive",
+        "body": [
+            "data-onfocus=\"${1:handleFocus}\""
+        ]
+    },
+    "EliteUI Directive data-onblur": {
+        "prefix": "elite-d-blur",
+        "description": "Add data-onblur directive",
+        "body": [
+            "data-onblur=\"${1:handleBlur}\""
+        ]
+    },
+    "EliteUI Directive data-disabled": {
+        "prefix": "elite-d-disabled",
+        "description": "Add data-disabled directive",
+        "body": [
+            "data-disabled=\"${1:isDisabled}\""
+        ]
+    },
+    "EliteUI Directive data-value": {
+        "prefix": "elite-d-value",
+        "description": "Add data-value directive",
+        "body": [
+            "data-value=\"${1:key}\""
+        ]
+    },
+    "EliteUI Directive data-checked": {
+        "prefix": "elite-d-checked",
+        "description": "Add data-checked directive for checkboxes",
+        "body": [
+            "data-checked=\"${1:isChecked}\""
+        ]
+    },
+    "EliteUI Directive data-placeholder": {
+        "prefix": "elite-d-placeholder",
+        "description": "Add data-placeholder directive",
+        "body": [
+            "data-placeholder=\"${1:key}\""
+        ]
+    },
+    "EliteUI Directive data-title": {
+        "prefix": "elite-d-title",
+        "description": "Add data-title directive",
+        "body": [
+            "data-title=\"${1:key}\""
+        ]
+    },
+    "EliteUI Directive data-href": {
+        "prefix": "elite-d-href",
+        "description": "Add data-href directive for links",
+        "body": [
+            "data-href=\"${1:url}\""
+        ]
+    },
+    "EliteUI Directive data-src": {
+        "prefix": "elite-d-src",
+        "description": "Add data-src directive for images",
+        "body": [
+            "data-src=\"${1:imageUrl}\""
+        ]
+    },
+    "EliteUI Directive data-link": {
+        "prefix": "elite-d-link",
+        "description": "Add data-link directive for SPA navigation",
+        "body": [
+            "data-link=\"${1:/path}\""
+        ]
+    },
+    "EliteUI Directive data-class": {
+        "prefix": "elite-d-class",
+        "description": "Add data-class-* directive for conditional classes",
+        "body": [
+            "data-class-${1:className}=\"${2:condition}\""
+        ]
+    },
+    "EliteUI Directive data-permission": {
+        "prefix": "elite-d-permission",
+        "description": "Add data-permission directive for role-based visibility",
+        "body": [
+            "data-permission=\"${1:users.write}\""
+        ]
+    },
+    "EliteUI Directive data-role": {
+        "prefix": "elite-d-role",
+        "description": "Add data-role directive for role-based visibility",
+        "body": [
+            "data-role=\"${1:admin}\""
+        ]
+    },
+    "EliteUI Directive data-attr": {
+        "prefix": "elite-d-attr",
+        "description": "Add data-attr-* directive for dynamic attributes",
+        "body": [
+            "data-attr-${1:aria-label}=\"${2:message}\""
+        ]
+    },
+    "EliteUI Directive data-style": {
+        "prefix": "elite-d-style",
+        "description": "Add data-style-* directive for dynamic styles",
+        "body": [
+            "data-style-${1:color}=\"${2:textColor}\""
+        ]
+    },
+    "EliteUI i18n Translation Setup": {
+        "prefix": "elite-i18n",
+        "description": "Set up i18n translations",
+        "body": [
+            "const i18n = new $i18n({",
+            "    locale: '${1:en}',",
+            "    fallbackLocale: '${2:en}',",
+            "    messages: {",
+            "        ${3:en}: {",
+            "            greeting: 'Hello',",
+            "            goodbye: 'Goodbye',",
+            "        },",
+            "        ${4:es}: {",
+            "            greeting: 'Hola',",
+            "            goodbye: 'Adios',",
+            "        },",
+            "    },",
+            "})",
+            "",
+            "window.$i18n = i18n"
+        ]
+    },
+    "EliteUI Validator Rule": {
+        "prefix": "elite-validator",
+        "description": "Create a custom validation rule",
+        "body": [
+            "$validators.${1:name} = (value, ...args) => {",
+            "    if (!value) return '${2:Field is required}'",
+            "    ${3:// validation logic}",
+            "    return null",
+            "}"
+        ]
+    },
+    "EliteUI useForm Hook": {
+        "prefix": "elite-useform",
+        "description": "Use useForm hook for form handling",
+        "body": [
+            "const form = useForm({",
+            "    initialValues: {",
+            "        ${1:name}: '',",
+            "        ${2:email}: '',",
+            "    },",
+            "    validate: (values) => {",
+            "        const errors = {}",
+            "        if (!values.${1:name}) errors.${1:name} = 'Required'",
+            "        if (!values.${2:email}) errors.${2:email} = 'Required'",
+            "        return errors",
+            "    },",
+            "    onSubmit: async (values) => {",
+            "        console.log('submitted:', values)",
+            "    },",
+            "})"
+        ]
+    },
+    "EliteUI HTTP GET": {
+        "prefix": "elite-http-get",
+        "description": "Make GET request with $http",
+        "body": [
+            "const data = await $http.get('${1:/api/endpoint}')"
+        ]
+    },
+    "EliteUI HTTP POST": {
+        "prefix": "elite-http-post",
+        "description": "Make POST request with $http",
+        "body": [
+            "const data = await $http.post('${1:/api/endpoint}', {",
+            "    ${2:field}: ${3:value},",
+            "})"
+        ]
+    },
+    "EliteUI HTTP PUT": {
+        "prefix": "elite-http-put",
+        "description": "Make PUT request with $http",
+        "body": [
+            "const data = await $http.put('${1:/api/endpoint}/${2:id}', {",
+            "    ${3:field}: ${4:value},",
+            "})"
+        ]
+    },
+    "EliteUI HTTP DELETE": {
+        "prefix": "elite-http-delete",
+        "description": "Make DELETE request with $http",
+        "body": [
+            "const data = await $http.delete('${1:/api/endpoint}/${2:id}')"
+        ]
+    },
+    "EliteUI Custom HTTP Client": {
+        "prefix": "elite-http-custom",
+        "description": "Create custom $http client instance",
+        "body": [
+            "const api = $http.create({",
+            "    baseUrl: '${1:/api}',",
+            "    timeout: ${2:15000},",
+            "    headers: {",
+            "        'X-API-Key': $env.get('${3:API_KEY}', ''),",
+            "    },",
+            "})"
+        ]
+    },
+    "EliteUI Debug Log": {
+        "prefix": "elite-debug",
+        "description": "Log debug information",
+        "body": [
+            "$debug?.log('[${1:Component}]', ${2:data})"
+        ]
+    },
+    "EliteUI Debug Track": {
+        "prefix": "elite-debug-track",
+        "description": "Track component lifecycle event",
+        "body": [
+            "$debug?.trackComponent('${1:Component}', '${2:event}', { ${3:meta} })"
+        ]
+    }
+}

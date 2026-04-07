@@ -1,0 +1,21 @@
+{
+    "app": {
+        "title": "Meu App EliteUI",
+        "description": "Construído com EliteUI"
+    },
+    "nav": {
+        "home": "Início",
+        "about": "Sobre",
+        "contact": "Contato"
+    },
+    "home": {
+        "title": "Bem-vindo ao EliteUI",
+        "subtitle": "Comece a construir seu app editando components/",
+        "getStarted": "Começar",
+        "learnMore": "Saiba Mais"
+    },
+    "footer": {
+        "copyright": "© 2026 Odineck",
+        "links": "Links"
+    }
+}

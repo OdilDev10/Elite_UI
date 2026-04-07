@@ -804,6 +804,33 @@ class SimpleComponent {
           })
         }
       })
+
+      // data-permission="permission": muestra/oculta según permisos
+      // Uso: data-permission="admin" o data-permission="users.write"
+      root.querySelectorAll('[data-permission]').forEach(el => {
+        const permission = el.dataset.permission
+        const hasPermission = $permissions?.can(permission)
+        
+        if (hasPermission === false) {
+          el.style.display = 'none'
+        } else if (hasPermission === true) {
+          el.style.display = ''
+        }
+        // Si $permissions no existe, mostrar elemento por defecto
+      })
+
+      // data-role="admin": muestra/oculta según rol
+      // Uso: data-role="admin" o data-role="user"
+      root.querySelectorAll('[data-role]').forEach(el => {
+        const role = el.dataset.role
+        const hasRole = $permissions?.isRole(role)
+        
+        if (hasRole === false) {
+          el.style.display = 'none'
+        } else if (hasRole === true) {
+          el.style.display = ''
+        }
+      })
     } catch (e) {
       console.error('[SimpleComponent] directive processing error:', e)
     }

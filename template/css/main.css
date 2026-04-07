@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --accent: #16a34a;
+    --accent-hover: #15803d;
+}
+
+[data-theme="dark"] {
+    --accent: #22c55e;
+    --accent-hover: #16a34a;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Code blocks */
+.code-block {
+    background: #09090b;
+    color: #a1a1aa;
+    border-radius: 10px;
+    padding: 1.25rem;
+    font-family: 'JetBrains Mono', 'Monaco', monospace;
+    font-size: 0.85rem;
+    overflow-x: auto;
+}
+
+/* Component templates */
+[data-template] {
+    display: contents;
+}
