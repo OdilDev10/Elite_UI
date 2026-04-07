@@ -1,6 +1,6 @@
 /**
  * Router
- * Enrutamiento cliente con layouts, nested routes y guards
+ * Enrutamiento cliente con layouts, nested routes, guards y lazy loading
  * 
  * Usage:
  * const router = new EliteRouter({
@@ -13,10 +13,11 @@
  * {
  *   path: '/admin',
  *   component: 'AdminPage',
- *   layout: 'admin-layout',      // override layout
- *   guards: ['isAuthenticated'], // per-route guards
+ *   lazy: { src: 'components/AdminPage.js' },  // Lazy loading
+ *   layout: 'admin-layout',
+ *   guards: ['isAuthenticated'],
  *   meta: { title: 'Admin' },
- *   children: [                  // nested routes
+ *   children: [
  *     { path: 'users', component: 'UsersPage' },
  *     { path: 'settings', component: 'SettingsPage' }
  *   ]
@@ -41,8 +42,20 @@ class EliteRouter {
         this._guards = []
         this._middleware = []
         
+        // LazyLoader for dynamic imports
+        this._lazyLoader = new LazyLoader()
+        
+        // ErrorBoundary
+        this._errorBoundary = new ErrorBoundary({
+            ok: false,
+            error: 'Component failed to load'
+        })
+        
         // 404 handler
         this._notFoundHandler = null
+        
+        // Current instance for cleanup
+        this._currentInstance = null
         
         this._setup()
     }
@@ -207,7 +220,7 @@ class EliteRouter {
 
         // Mount component if exists
         if (route.component) {
-            this._mountComponent(route)
+            await this._mountComponent(route)
         }
 
         // Notify subscribers
@@ -258,7 +271,7 @@ class EliteRouter {
     /**
      * Mount component to container
      */
-    _mountComponent(route) {
+    async _mountComponent(route) {
         const container = route.container || '#app'
         const el = document.querySelector(container)
         if (!el) {
@@ -266,7 +279,21 @@ class EliteRouter {
             return
         }
 
-        const ComponentClass = window[route.component]
+        let ComponentClass = window[route.component]
+        
+        // Lazy loading
+        if (!ComponentClass && route.lazy) {
+            const src = route.lazy.src || `components/${route.component}.js`
+            try {
+                await this._lazyLoader.loadScript(src, route.component)
+                ComponentClass = window[route.component]
+            } catch (e) {
+                console.error(`[Router] failed to lazy load ${route.component}:`, e)
+                this._errorBoundary._handleError(e, `lazy:${route.component}`)
+                return
+            }
+        }
+
         if (!ComponentClass) {
             console.warn(`[Router] component not found: ${route.component}`)
             return
@@ -279,13 +306,21 @@ class EliteRouter {
             query: this._getQueryParams()
         }
 
-        // Mount
-        const instance = new ComponentClass(container, props)
-        instance.mount()
-        
-        // Store for cleanup
-        if (!this._currentInstance) {
+        // Cleanup previous instance
+        if (this._currentInstance) {
+            this._currentInstance.unmount?.()
+        }
+
+        // Mount with ErrorBoundary
+        try {
+            const instance = new ComponentClass(container, props)
+            instance.mount()
             this._currentInstance = instance
+        } catch (e) {
+            console.error(`[Router] error mounting ${route.component}:`, e)
+            this._errorBoundary._handleError(e, `mount:${route.component}`)
+            // Show fallback
+            el.innerHTML = `<div class="text-red-500 p-4">Error loading component: ${route.component}</div>`
         }
     }
 

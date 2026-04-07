@@ -16,7 +16,7 @@ class Hero extends SimpleComponent {
 
     render() {
         if (!this.el) return
-        this.el.innerHTML = this.loadTemplate('Hero')
+        this.el.innerHTML = this.loadTemplate('component-hero')
     }
 
     onMount() {

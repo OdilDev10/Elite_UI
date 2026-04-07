@@ -15,7 +15,7 @@ class FeatureCard extends SimpleComponent {
 
     render() {
         if (!this.el) return
-        this.el.innerHTML = this.loadTemplate('FeatureCard')
+        this.el.innerHTML = this.loadTemplate('component-feature-card')
     }
 }
 

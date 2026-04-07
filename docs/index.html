@@ -4,61 +4,194 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EliteUI - Docs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../css/main.css">
 </head>
-<body>
-    <header>
-        <div class="container header-content">
-            <a href="../index.html" class="logo">EliteUI</a>
+<body class="bg-white dark:bg-black text-zinc-900 dark:text-zinc-100 min-h-screen">
+    
+    <header class="sticky top-0 z-50 bg-white/80 dark:bg-black/80 backdrop-blur-sm border-b border-zinc-200 dark:border-zinc-800">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="../index.html" class="flex items-center gap-2 font-bold text-xl tracking-tight">
+                <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full"></span>
+                EliteUI Docs
+            </a>
+            <a href="https://github.com/odineck/elite-ui" target="_blank" class="text-sm text-zinc-500 hover:text-emerald-500">GitHub</a>
         </div>
     </header>
 
-    <main class="container">
-        <h1 style="margin-bottom: 2rem;">Documentation</h1>
+    <main class="max-w-6xl mx-auto px-6 py-8">
+        <h1 class="text-4xl font-bold mb-8">Documentation</h1>
 
-        <div class="bento-grid">
-            <a href="components.html" class="bento-card" style="text-decoration: none;">
-                <div>
-                    <h3>Components</h3>
-                    <p>SimpleComponent, lifecycle, state management</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            
+            <!-- Getting Started -->
+            <a href="md/getting-started.md" class="bento-card hover:border-emerald-500 transition-colors">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">🚀</span>
+                    <h3 class="font-bold text-lg">Getting Started</h3>
                 </div>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">Installation, setup y estructura de proyecto</p>
             </a>
 
-            <a href="http.html" class="bento-card" style="text-decoration: none;">
-                <div>
-                    <h3>$http</h3>
-                    <p>Simple HTTP client with interceptors</p>
+            <!-- Directivas -->
+            <a href="md/directives.md" class="bento-card hover:border-emerald-500 transition-colors">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">📋</span>
+                    <h3 class="font-bold text-lg">Directivas</h3>
                 </div>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">Sistema de directivas data-* (18+ directivas)</p>
             </a>
 
-            <a href="schema.html" class="bento-card" style="text-decoration: none;">
-                <div>
-                    <h3>$schema</h3>
-                    <p>Mini Zod for data validation</p>
+            <!-- Components -->
+            <a href="md/components.md" class="bento-card hover:border-emerald-500 transition-colors">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">🧩</span>
+                    <h3 class="font-bold text-lg">Components</h3>
                 </div>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">SimpleComponent, lifecycle, state</p>
             </a>
 
-            <a href="validators.html" class="bento-card" style="text-decoration: none;">
-                <div>
-                    <h3>Validators</h3>
-                    <p>Security & input validation</p>
+            <!-- Store -->
+            <a href="md/store.md" class="bento-card hover:border-emerald-500 transition-colors">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">📦</span>
+                    <h3 class="font-bold text-lg">Store</h3>
                 </div>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">State management con createStore</p>
             </a>
 
-            <a href="debug.html" class="bento-card" style="text-decoration: none;">
-                <div>
-                    <h3>$debug</h3>
-                    <p>Debug tools and lifecycle tracking</p>
+            <!-- Router -->
+            <a href="md/router.md" class="bento-card hover:border-emerald-500 transition-colors">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">🧭</span>
+                    <h3 class="font-bold text-lg">Router</h3>
                 </div>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">EliteRouter con guards y layouts</p>
             </a>
 
-            <a href="router.html" class="bento-card" style="text-decoration: none;">
-                <div>
-                    <h3>Router</h3>
-                    <p>Hash-based routing with guards</p>
+            <!-- Permissions -->
+            <a href="md/permissions.md" class="bento-card hover:border-emerald-500 transition-colors">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">🔐</span>
+                    <h3 class="font-bold text-lg">Permissions</h3>
                 </div>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">Sistema de roles y permisos</p>
             </a>
+
+            <!-- HTTP -->
+            <a href="md/http.md" class="bento-card hover:border-emerald-500 transition-colors">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">🔌</span>
+                    <h3 class="font-bold text-lg">HTTP</h3>
+                </div>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">$http y HttpClient con interceptores</p>
+            </a>
+
+            <!-- Services -->
+            <a href="md/services.md" class="bento-card hover:border-emerald-500 transition-colors">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">⚙️</span>
+                    <h3 class="font-bold text-lg">Services</h3>
+                </div>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">API, Auth y Cart services</p>
+            </a>
+
+            <!-- i18n -->
+            <a href="md/i18n.md" class="bento-card hover:border-emerald-500 transition-colors">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">🌍</span>
+                    <h3 class="font-bold text-lg">i18n</h3>
+                </div>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">Sistema de traducciones</p>
+            </a>
+
+            <!-- Env -->
+            <a href="md/env.md" class="bento-card hover:border-emerald-500 transition-colors">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">⚡</span>
+                    <h3 class="font-bold text-lg">Env</h3>
+                </div>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">Variables de entorno</p>
+            </a>
+
+            <!-- Validators -->
+            <a href="md/validators.md" class="bento-card hover:border-emerald-500 transition-colors">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">✅</span>
+                    <h3 class="font-bold text-lg">Validators</h3>
+                </div>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">Validación de datos y seguridad</p>
+            </a>
+
+            <!-- Schema -->
+            <a href="md/schema.md" class="bento-card hover:border-emerald-500 transition-colors">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">📝</span>
+                    <h3 class="font-bold text-lg">Schema</h3>
+                </div>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">Validación de esquemas (mini Zod)</p>
+            </a>
+
+            <!-- Debug -->
+            <a href="md/debug.md" class="bento-card hover:border-emerald-500 transition-colors">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">🐛</span>
+                    <h3 class="font-bold text-lg">$debug</h3>
+                </div>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">Herramientas de debug</p>
+            </a>
+
+            <!-- Snippets -->
+            <a href="md/snippets.md" class="bento-card hover:border-emerald-500 transition-colors">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">⚡</span>
+                    <h3 class="font-bold text-lg">Snippets</h3>
+                </div>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">VS Code snippets para EliteUI</p>
+            </a>
+
         </div>
+
+        <section class="mt-12">
+            <h2 class="text-2xl font-bold mb-4">Estructura del Proyecto</h2>
+            <pre class="bg-zinc-900 text-zinc-100 p-4 rounded-lg overflow-x-auto">
+my-app/
+├── index.html
+├── css/main.css
+├── components/
+│   ├── index.js
+│   └── ComponentName/
+│       ├── ComponentName.js
+│       └── ComponentName.html
+├── context/
+│   ├── index.js
+│   └── store.js
+├── layouts/
+│   ├── index.js
+│   └── MainLayout.js
+├── pages/
+│   ├── index.js
+│   └── HomePage/
+│       ├── home.js
+│       └── home.html
+├── router/
+│   ├── index.js
+│   └── router.js
+├── services/
+│   ├── index.js
+│   ├── api.js
+│   ├── auth.js
+│   └── cart.js
+└── lang/
+    ├── en/common.json
+    └── es/common.json</pre>
+        </section>
     </main>
+
+    <footer class="border-t border-zinc-200 dark:border-zinc-800 mt-16">
+        <div class="max-w-6xl mx-auto px-6 py-8 text-center text-sm text-zinc-500">
+            <p>© 2026 Odineck Technology</p>
+        </div>
+    </footer>
 </body>
 </html>

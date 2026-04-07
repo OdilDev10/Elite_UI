@@ -16,5 +16,6 @@ window.__eliteComponents = {
   ThemeToggle: true,
   CodeCard: true,
   FeatureCard: true,
-  FormCard: true
+  FormCard: true,
+  SmartForm: true
 }

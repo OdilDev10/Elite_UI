@@ -17,8 +17,10 @@ class ThemeToggle extends SimpleComponent {
 
     render() {
         if (!this.el) return
+        const isDark = this.state.theme === 'dark'
         document.documentElement.setAttribute('data-theme', this.state.theme)
-        this.el.innerHTML = this.loadTemplate('ThemeToggle')
+        document.documentElement.classList.toggle('dark', isDark)
+        this.el.innerHTML = this.loadTemplate('component-theme-toggle')
     }
 
     onMount() {
@@ -45,6 +47,17 @@ class ThemeToggle extends SimpleComponent {
         this.setState({ theme: newTheme })
         localStorage.setItem('elite-theme', newTheme)
         document.documentElement.setAttribute('data-theme', newTheme)
+        
+        // Add/remove 'dark' class for Tailwind
+        document.documentElement.classList.toggle('dark', newTheme === 'dark')
+        
+        // Also update CSS variables as fallback
+        document.documentElement.style.setProperty('--bg', newTheme === 'dark' ? '#09090b' : '#fafafa')
+        document.documentElement.style.setProperty('--text', newTheme === 'dark' ? '#fafafa' : '#27272a')
+        document.documentElement.style.setProperty('--text-muted', newTheme === 'dark' ? '#a1a1aa' : '#71717a')
+        document.documentElement.style.setProperty('--border', newTheme === 'dark' ? '#27272a' : '#f1f1f4')
+        document.documentElement.style.setProperty('--card-bg', newTheme === 'dark' ? '#18181b' : '#ffffff')
+        
         this._props.onToggle?.(newTheme)
     }
 }

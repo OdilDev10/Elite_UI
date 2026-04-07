@@ -16,7 +16,7 @@
             class="w-9 h-9 rounded-lg border border-zinc-200 dark:border-zinc-700 flex items-center justify-center transition-colors hover:border-green-600"
         >
             <svg 
-                data-show="theme === 'light'" 
+                data-if="theme === 'light'" 
                 viewBox="0 0 24 24" 
                 fill="none" 
                 stroke="currentColor" 
@@ -34,7 +34,7 @@
                 <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
             </svg>
             <svg 
-                data-show="theme === 'dark'" 
+                data-if="theme === 'dark'" 
                 viewBox="0 0 24 24" 
                 fill="none" 
                 stroke="currentColor" 
@@ -85,32 +85,7 @@
     <!-- Page Outlet -->
     <main id="page-home"></main>
 
-    <!-- Framework Core -->
-    <script src="https://cdn.jsdelivr.net/npm/@odineck/elite-ui@latest/dist/elite-ui.min.js"></script>
-    
-    <!-- Components -->
-    <script src="components/ThemeToggle/ThemeToggle.js"></script>
-    
-    <!-- Pages -->
-    <script src="pages/home/home.js"></script>
-    
-    <!-- Bootstrap -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Mount ThemeToggle
-            const savedTheme = localStorage.getItem('elite-theme')
-            const themeToggle = new ThemeToggle('#component-theme-toggle', { theme: savedTheme || 'light' })
-            themeToggle.mount()
-            
-            // Mount Home Page
-            const home = new HomePage('#page-home', {
-                title: 'Welcome to EliteUI',
-                subtitle: 'Start building your app by editing components/'
-            })
-            home.mount()
-            
-            console.log('My App Ready')
-        })
-    </script>
+    <!-- Single Entry Point -->
+    <script src="app.js"></script>
 </body>
 </html>

@@ -1,49 +1,55 @@
-# ✅ Sistema de Directivas Data-* - Estandar EliteUI
+# Sistema de Directivas Data-* - EliteUI
 
-## 📋 Resumen
+## Regla Principal
 
-EliteUI usa **directivas data-*** para toda la manipulación del DOM y reactividad. **No se usan {{}} placeholders**. Todo es declarativo via HTML.
+**NO usar `{{}}`** - Solo directivas `data-*`. Son HTML estándar.
 
 ---
 
-## Directivas Soportadas (18 total)
+## Directivas Soportadas
 
-### Content & Text
-| Directiva | Comportamiento | Ejemplo |
-|-----------|---|---|
-| `data-text="key"` | Escribe state[key] como textContent (XSS-safe) | `<span data-text="count"></span>` |
-| `data-html="key"` | Renderiza HTML (⚠️ XSS risk) | `<div data-html="htmlContent"></div>` |
+### Contenido
 
-### Visibility & Display
 | Directiva | Comportamiento | Ejemplo |
-|-----------|---|---|
+|-----------|----------------|---------|
+| `data-text="key"` | Escribe texto seguro (XSS-safe) | `<span data-text="count"></span>` |
+| `data-html="key"` | Renderiza HTML (usar con precaución) | `<div data-html="content"></div>` |
+
+### Visibilidad
+
+| Directiva | Comportamiento | Ejemplo |
+|-----------|----------------|---------|
 | `data-if="expr"` | Muestra/oculta con display:none | `<div data-if="isOpen">...</div>` |
 | `data-show="expr"` | Muestra/oculta con visibility | `<div data-show="isVisible">...</div>` |
 
-### Input Binding
-| Directiva | Comportamiento | Ejemplo |
-|-----------|---|---|
-| `data-bind="key"` | Two-way binding (estado ↔ input) | `<input data-bind="email" />` |
-| `data-value="key"` | Establece value (lectura solo) | `<input data-value="message" />` |
-| `data-checked="expr"` | Para checkboxes/radios | `<input type="checkbox" data-checked="isActive" />` |
+### Binding (Inputs)
 
-### Attributes
 | Directiva | Comportamiento | Ejemplo |
-|-----------|---|---|
-| `data-disabled="expr"` | Desactiva elemento si expr es true | `<button data-disabled="isBusy">Send</button>` |
+|-----------|----------------|---------|
+| `data-bind="key"` | Two-way binding | `<input data-bind="email" />` |
+| `data-value="key"` | Value solo lectura | `<input data-value="message" />` |
+| `data-checked="expr"` | Para checkboxes | `<input type="checkbox" data-checked="isActive" />` |
+
+### Atributos
+
+| Directiva | Comportamiento | Ejemplo |
+|-----------|----------------|---------|
+| `data-disabled="expr"` | Desactiva elemento | `<button data-disabled="isBusy">Send</button>` |
 | `data-placeholder="key"` | Placeholder dinámico | `<input data-placeholder="hint" />` |
-| `data-title="key"` | Atributo title dinámico | `<button data-title="tooltip">Hover</button>` |
+| `data-title="key"` | Atributo title | `<button data-title="tooltip">Hover</button>` |
 | `data-href="key"` | href dinámico | `<a data-href="url">Link</a>` |
-| `data-src="key"` | src dinámico (img, iframe) | `<img data-src="imageUrl" />` |
-| `data-attr-*="expr"` | Atributos genéricos | `<div data-attr-aria-label="label"></div>` |
+| `data-src="key"` | src dinámico | `<img data-src="imageUrl" />` |
+| `data-attr-*-="expr"` | Atributo genérico | `<div data-attr-aria-label="label"></div>` |
 
-### Styling
+### Clases
+
 | Directiva | Comportamiento | Ejemplo |
-|-----------|---|---|
-| `data-class-X="expr"` | Toggle de clase X | `<button data-class-active="isActive">...</button>` |
-| `data-style-*="expr"` | Estilos dinámicos | `<div data-style-color="color"></div>` |
+|-----------|----------------|---------|
+| `data-class-X="expr"` | Toggle clase X | `<button data-class-active="isActive">...</button>` |
+| `data-style-X="expr"` | Estilo dinámico | `<div data-style-color="color"></div>` |
 
-### Event Listeners
+### Eventos
+
 | Directiva | Evento | Ejemplo |
 |-----------|--------|---------|
 | `data-onclick="method"` | click | `<button data-onclick="increment">+</button>` |
@@ -55,51 +61,73 @@ EliteUI usa **directivas data-*** para toda la manipulación del DOM y reactivid
 | `data-onblur="method"` | blur | `<input data-onblur="onBlur" />` |
 | `data-onsubmit="method"` | submit | `<form data-onsubmit="handleSubmit"></form>` |
 
-### Outlets (Layout)
-| Directiva | Comportamiento | Ejemplo |
-|-----------|--------|---------|
-| `data-outlet="name"` | Contenedor para componentes hijos | `<div data-outlet="sidebar"></div>` |
+### Permisos
 
-### Navigation
 | Directiva | Comportamiento | Ejemplo |
-|-----------|--------|---------|
-| `data-link="/path"` | Click → navega sin reload | `<a data-link="/">Home</a>` |
+|-----------|----------------|---------|
+| `data-permission="perm"` | Oculta sin permiso | `<button data-permission="users.delete">Delete</button>` |
+| `data-role="role"` | Oculta sin rol | `<div data-role="admin">Admin Panel</div>` |
+
+### Layout
+
+| Directiva | Comportamiento | Ejemplo |
+|-----------|----------------|---------|
+| `data-outlet="name"` | Contenedor hijos | `<div data-outlet="sidebar"></div>` |
+
+### Navegación
+
+| Directiva | Comportamiento | Ejemplo |
+|-----------|----------------|---------|
+| `data-link="/path"` | Navega sin reload | `<a data-link="/">Home</a>` |
 
 ---
 
 ## Ejemplos de Uso
 
-### Content & Text
+### Contenido
+
 ```html
-<p data-text="message"></p>
+<span data-text="message"></span>
 <div data-html="richContent"></div>
 ```
 
-### Visibility
+### Visibilidad
+
 ```html
-<div data-if="isOpen">Contenido removido si isOpen es false</div>
-<div data-show="isLoading">Sigue ocupando espacio</div>
+<div data-if="isOpen">Removido del DOM si false</div>
+<div data-show="isLoading">Oculto con visibility si false</div>
 ```
 
-### Input Binding
+### Inputs
+
 ```html
 <input data-bind="email" />
 <input type="checkbox" data-checked="isAdmin" />
 ```
 
-### Event Handlers
+### Eventos
+
 ```html
 <button data-onclick="increment">+</button>
 <input data-oninput="handleSearch" />
 <form data-onsubmit="submitForm"></form>
 ```
 
-### Classes
+### Clases
+
 ```html
 <button data-class-active="isActive" class="px-4 py-2">Click</button>
 ```
 
-### Outlets (Layout)
+### Permisos
+
+```html
+<button data-permission="users.delete">Delete User</button>
+<div data-role="admin">Solo visible para admins</div>
+```
+
+### Outlets
+
 ```html
 <div data-outlet="sidebar"></div>
 <main data-outlet="content"></main>
@@ -107,43 +135,14 @@ EliteUI usa **directivas data-*** para toda la manipulación del DOM y reactivid
 
 ---
 
-## Quick Reference
-
-```html
-<!-- Text -->
-<span data-text="key"></span>
-<div data-html="htmlKey"></div>
-
-<!-- Visibility -->
-<div data-if="condition"></div>
-<div data-show="condition"></div>
-
-<!-- Input -->
-<input data-bind="key" />
-<input type="checkbox" data-checked="condition" />
-
-<!-- Events -->
-<button data-onclick="method"></button>
-<input data-oninput="method" />
-<form data-onsubmit="method"></form>
-
-<!-- Classes -->
-<element data-class-active="condition"></element>
-
-<!-- Outlets -->
-<div data-outlet="name"></div>
-```
-
----
-
-## Comparación: Vue vs EliteUI Directives
+## Comparación Vue vs EliteUI
 
 | Vue | EliteUI | Tipo |
 |-----|---------|------|
 | `v-if` | `data-if` | Visibility |
 | `v-show` | `data-show` | Visibility |
 | `{{ text }}` | `data-text` | Content |
-| `v-html` | `data-html` | Content (XSS risk) |
+| `v-html` | `data-html` | Content |
 | `v-model` | `data-bind` | Binding |
 | `v-bind:attr` | `data-attr-*` | Attributes |
 | `v-bind:class` | `data-class-*` | Classes |
@@ -151,18 +150,18 @@ EliteUI usa **directivas data-*** para toda la manipulación del DOM y reactivid
 | `@click` | `data-onclick` | Events |
 | `@change` | `data-onchange` | Events |
 | `@input` | `data-oninput` | Events |
-| `@keyup` | `data-onkeyup` | Events |
-| `@focus` | `data-onfocus` | Events |
+| `v-permission` | `data-permission` | Security |
 | `<slot>` | `data-outlet` | Layout |
 
 ---
 
-## 🎯 Reglas Importantes
+## Reglas Importantes
 
-1. **NO usar {{}}** - Solo directivas data-*
-2. **NO usar v-*** - Usar data-* (HTML standard)
-3. **NO inline styles en templates** - Usar Tailwind classes
-4. **Usar data-outlet** para composición de layouts
+1. **NO usar `{{}}`** - Solo directivas `data-*`
+2. **NO usar `v-*`** - Usar `data-*` (estándar HTML)
+3. **NO estilos inline** - Usar clases Tailwind
+4. **Usar `data-outlet`** para composición de layouts
+5. **Templates inline** para compatibilidad con `file://`
 
 ---
 

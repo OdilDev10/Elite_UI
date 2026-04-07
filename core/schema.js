@@ -215,20 +215,13 @@ const $safeParse = (schema, data) => {
   }
 }
 
-// Export
-window.$schema = {
-  string: $string,
-  number: $number,
-  boolean: $boolean,
-  array: $array,
-  object: $object,
-  enum: $enum,
-  optional: $optional,
-  merge: $merge,
-  safeParse: $safeParse
+// $schema function - creates a schema from fields definition
+const $schema = (fields) => {
+  return $object(fields)
 }
 
-// Shorthand
+// Shorthand exports (attach to window immediately for use within bundle)
+window.$schema = $schema
 window.$string = $string
 window.$number = $number
 window.$boolean = $boolean
@@ -236,5 +229,7 @@ window.$array = $array
 window.$object = $object
 window.$enum = $enum
 window.$optional = $optional
+window.$merge = $merge
+window.$safeParse = $safeParse
 
 console.log('[$schema] Mini Zod ready')

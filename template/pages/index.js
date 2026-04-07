@@ -6,6 +6,11 @@
  * import { HomePage, router } from './index.js'
  */
 
+// Registry for app.js loader
+window.__elitePages = {
+    HomePage: true
+}
+
 export { HomePage } from './home/home.js'
 
 // Router configuration

@@ -10,7 +10,8 @@
     "dist",
     "template",
     "scripts/create.js",
-    "README.md"
+    "README.md",
+    ".eslintrc.json"
   ],
   "bin": {
     "create-elite-ui": "./scripts/create.js"
@@ -18,7 +19,12 @@
   "scripts": {
     "create": "node scripts/create.js",
     "bundle": "node scripts/bundle.cjs",
+    "lint": "eslint core/ components/ pages/ --fix",
+    "lint:check": "eslint core/ components/ pages/",
     "test": "echo 'Tests coming soon'"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1"
   },
   "keywords": [
     "vanilla-js",

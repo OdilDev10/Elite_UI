@@ -9,10 +9,13 @@
  * - ErrorBoundary: Captura y manejo de errores
  * - Router: Enrutamiento cliente con query params
  * - LazyLoader: Carga dinámica de recursos
- * - HttpClient: Wrapper de fetch con interceptors
+ * - HttpClient: Wrapper de fetch con interceptores
  * - useForm: State management de formularios con validación
  * - DevTools: Debugging utilities para desarrollo
  * - DomUtils: Sanitización, masks, view transitions
+ * - $schema: Mini Zod para validación de esquemas
+ * - SmartForm: Formularios dinámicos con fields
+ * - types/: Field configs y schemas pre-construidos
  *
  * Cargar después de este archivo:
  * <script src="js/framework/core/SimpleComponent.js"></script>
@@ -26,6 +29,9 @@
  * <script src="js/framework/core/useForm.js"></script>
  * <script src="js/framework/core/DomUtils.js"></script>
  * <script src="js/framework/core/DevTools.js"></script>
+ * <script src="js/framework/core/schema.js"></script>
+ * <script src="js/framework/core/types/index.js"></script>
+ * <script src="js/framework/core/components/SmartForm/index.js"></script>
  * <script src="js/framework/core/index.js"></script>
  *
  * CSS:
@@ -208,6 +214,7 @@ console.log('  - UseForm (form state + security features)')
 console.log('  - EliteUI (registry)')
 console.log('  - App (application bootstrap)')
 console.log('  - DevTools (debugging utilities)')
+console.log('  - SmartForm (dynamic form generator)')
 console.log('')
 console.log('Security & Validation:')
 console.log('  - Validators.email(value)')
@@ -217,6 +224,14 @@ console.log('  - Validators.phone(value)')
 console.log('  - Validators.noXSS(value)')
 console.log('  - Validators.noSQLi(value)')
 console.log('  - combineValidators(...validators)')
+console.log('  - $schema (Mini Zod for schema validation)')
+console.log('')
+console.log('Types & Fields:')
+console.log('  - textField, emailField, passwordField, numberField')
+console.log('  - selectField, searchSelectField, multiSelectField')
+console.log('  - phoneField, dniField, dateField, durationField')
+console.log('  - switchField, checkboxField, textareaField')
+console.log('  - userSchema, loginSchema, codegenProjectSchema')
 console.log('')
 console.log('DOM Utilities:')
 console.log('  - sanitize(html) - Prevent XSS')

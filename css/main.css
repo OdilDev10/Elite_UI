@@ -4,55 +4,87 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-    --accent: #16a34a;
-    --accent-hover: #15803d;
+@layer base {
+    html {
+        scroll-behavior: smooth;
+        font-size: 15px;
+    }
+
+    body {
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        letter-spacing: -0.015em;
+        background-color: var(--bg);
+        color: var(--text);
+    }
+
+    /* CSS Variables for theming - override Tailwind's dark: classes */
+    :root {
+        --bg: #fafafa;
+        --text: #27272a;
+        --text-muted: #71717a;
+        --border: #f1f1f4;
+        --card-bg: #ffffff;
+        --accent: #10b981;
+    }
+
+    [data-theme="dark"] {
+        --bg: #09090b;
+        --text: #fafafa;
+        --text-muted: #a1a1aa;
+        --border: #27272a;
+        --card-bg: #18181b;
+        --accent: #10b981;
+    }
 }
 
-[data-theme="dark"] {
-    --accent: #22c55e;
-    --accent-hover: #16a34a;
+@layer components {
+    .reveal-1 { animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards; opacity: 0; }
+    .reveal-2 { animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards; opacity: 0; }
+    .reveal-3 { animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards; opacity: 0; }
+    .reveal-4 { animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards; opacity: 0; }
+    .reveal-5 { animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards; opacity: 0; }
+
+    /* Override Tailwind dark: classes with CSS variables */
+    .dark .dark\:bg-zinc-900 { background-color: var(--card-bg) !important; }
+    .dark .dark\:bg-zinc-800 { background-color: var(--card-bg) !important; }
+    .dark .dark\:bg-zinc-950 { background-color: var(--bg) !important; }
+    .dark .dark\:bg-white\/80 { background-color: rgba(9, 9, 11, 0.8) !important; }
+    .dark .dark\:text-zinc-100 { color: var(--text) !important; }
+    .dark .dark\:text-zinc-400 { color: var(--text-muted) !important; }
+    .dark .dark\:text-zinc-500 { color: var(--text-muted) !important; }
+    .dark .dark\:border-zinc-700 { border-color: var(--border) !important; }
+    .dark .dark\:border-zinc-800 { border-color: var(--border) !important; }
+    .dark .dark\:text-emerald-400 { color: var(--accent) !important; }
+
+    /* Card backgrounds */
+    .dark .dark\:bg-zinc-50 { background-color: var(--bg) !important; }
+    .dark .dark\:bg-zinc-900\/40 { background-color: var(--card-bg) !important; }
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+@keyframes reveal {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
-html {
-    scroll-behavior: smooth;
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
 }
 
-body {
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+.animate-float {
+    animation: float 3s ease-in-out infinite;
 }
 
-/* Code blocks */
-.code-block {
-    background: #09090b;
-    color: #a1a1aa;
-    border-radius: 10px;
-    padding: 1.25rem;
-    font-family: 'JetBrains Mono', 'Monaco', monospace;
-    font-size: 0.85rem;
-    overflow-x: auto;
-}
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(16, 185, 129, 0.4); }
 
-.code-block .keyword { color: #c678dd; }
-.code-block .string { color: #98c379; }
-.code-block .number { color: #d19a66; }
-.code-block .comment { color: #5c6370; }
-.code-inline {
-    background: #f4f4f5;
-    padding: 0.15rem 0.4rem;
-    border-radius: 4px;
-    font-family: monospace;
-    font-size: 0.8rem;
-    color: var(--accent);
-}
-
-/* Component templates */
-[data-template] {
-    display: contents;
-}
+[data-template] { display: none; }

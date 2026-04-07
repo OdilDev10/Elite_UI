@@ -16,7 +16,7 @@ class Counter extends SimpleComponent {
 
     render() {
         if (!this.el) return
-        this.el.innerHTML = this.loadTemplate('Counter')
+        this.el.innerHTML = this.loadTemplate('component-counter')
     }
 
     increment() {
