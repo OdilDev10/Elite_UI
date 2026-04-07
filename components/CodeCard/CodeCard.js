@@ -1,26 +1,21 @@
 /**
  * CodeCard Component
- * Renders syntax-highlighted code with filename header
+ * Displays filename and code with syntax highlighting
  */
 
 class CodeCard extends SimpleComponent {
     constructor(selector, props = {}) {
-        super(selector)
-        this._props = {
+        super(selector, {
             filename: 'code.js',
             code: '// Your code here',
             ...props
-        }
+        })
     }
 
     async render() {
         if (!this.el) return
-
-        this.el.className = 'bento-card code-card'
-        this.el.innerHTML = await this.loadTemplate('CodeCard', {
-            filename: this._props.filename,
-            code: this._props.code
-        })
+        this.el.className = 'col-span-full bg-zinc-900 text-white rounded-xl p-5'
+        this.el.innerHTML = await this.loadTemplate('CodeCard')
     }
 }
 

@@ -1,8 +1,8 @@
-<div class="counter-card">
-    <span class="counter-label" data-text="label"></span>
-    <div class="counter-controls">
-        <button class="counter-btn" data-onclick="decrement" data-bind-disabled="count <= min">−</button>
-        <span class="counter-value" data-text="count"></span>
-        <button class="counter-btn" data-onclick="increment" data-bind-disabled="count >= max">+</button>
+<div class="flex flex-col gap-3 p-4 border border-zinc-200 dark:border-zinc-800 rounded-lg bg-zinc-50 dark:bg-zinc-900 max-w-[200px]">
+    <span class="text-sm font-semibold text-zinc-600 dark:text-zinc-400 capitalize" data-text="label"></span>
+    <div class="flex items-center gap-3 justify-center">
+        <button data-onclick="decrement" data-bind-disabled="count <= min" class="w-8 h-8 border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded font-bold hover:border-green-600 hover:text-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">−</button>
+        <span class="text-2xl font-extrabold text-green-600 dark:text-green-400 min-w-[40px] text-center" data-text="count"></span>
+        <button data-onclick="increment" data-bind-disabled="count >= max" class="w-8 h-8 border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded font-bold hover:border-green-600 hover:text-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">+</button>
     </div>
 </div>

@@ -1,7 +1,9 @@
-<div class="code-header">
-    <div class="dot dot-red"></div>
-    <div class="dot dot-yellow"></div>
-    <div class="dot dot-green"></div>
-    <span class="code-filename">{{filename}}</span>
+<div class="bg-zinc-900 text-white rounded-xl p-5 col-span-full">
+    <div class="flex items-center gap-2 mb-4">
+        <div class="w-2 h-2 rounded-full bg-red-500"></div>
+        <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
+        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+        <span class="ml-2 text-xs text-zinc-500 font-mono" data-text="filename"></span>
+    </div>
+    <pre class="font-mono text-sm text-zinc-300 whitespace-pre-wrap" data-html="code"></pre>
 </div>
-<div class="code-content">{{code}}</div>

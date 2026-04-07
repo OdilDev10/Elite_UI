@@ -242,42 +242,18 @@ class SimpleComponent {
   }
 
   /**
-   * Load template by ID and replace {{placeholder}} with data
-   * First looks for <template id="tmpl-ComponentName"> in DOM
-   * Falls back to fetching components/ComponentName/ComponentName.html
-   * @param {string} templateId - Without "tmpl-" prefix (e.g., "CodeCard" for id="tmpl-CodeCard")
-   * @param {Object} data - Key-value pairs to replace {{key}} in template
-   * @returns {string} Rendered HTML
+   * Load template from DOM (no fetch for file:// compatibility)
    */
-  async loadTemplate(templateId, data = {}) {
+  async loadTemplate(templateId) {
     const fullId = `tmpl-${templateId}`
-    let tmpl = document.getElementById(fullId)
-    let html = ''
-
+    const tmpl = document.getElementById(fullId)
+    
     if (tmpl) {
-      html = tmpl.innerHTML
-    } else {
-      // Try to load from component's HTML file
-      try {
-        const path = `components/${templateId}/${templateId}.html`
-        const res = await fetch(path)
-        if (res.ok) {
-          html = await res.text()
-        } else {
-          console.warn(`[SimpleComponent] Template not found: #${fullId} or ${path}`)
-          return ''
-        }
-      } catch (e) {
-        console.warn(`[SimpleComponent] Template not found: #${fullId}`)
-        return ''
-      }
+      return tmpl.innerHTML
     }
-
-    Object.entries(data).forEach(([key, val]) => {
-      const escaped = typeof val === 'string' ? this._escapeHtml(val) : String(val ?? '')
-      html = html.replace(new RegExp(`{{${key}}}`, 'g'), escaped)
-    })
-    return html
+    
+    console.warn(`[SimpleComponent] Template not found: ${templateId}`)
+    return ''
   }
 
   /**
@@ -532,7 +508,7 @@ class SimpleComponent {
       })
 
       // data-class-X="expr": toggle de clase según expresión
-      root.querySelectorAll('[data-*]').forEach(el => {
+      root.querySelectorAll('*').forEach(el => {
         Object.keys(el.dataset).forEach(key => {
           if (key.startsWith('class')) {
             // Convertir camelCase a kebab-case para nombres de clase
@@ -643,7 +619,7 @@ class SimpleComponent {
 
       // data-attr-*="key": atributos dinámicos genéricos
       // Ejemplo: data-attr-aria-label="message", data-attr-data-id="userId"
-      root.querySelectorAll('[data-*]').forEach(el => {
+      root.querySelectorAll('*').forEach(el => {
         Object.keys(el.dataset).forEach(key => {
           if (key.startsWith('attr')) {
             // data-attrAriaLabel -> aria-label
@@ -662,7 +638,7 @@ class SimpleComponent {
 
       // data-style-*: estilos dinámicos
       // Ejemplo: data-style-color="color", data-style-font-size="fontSize"
-      root.querySelectorAll('[data-*]').forEach(el => {
+      root.querySelectorAll('*').forEach(el => {
         Object.keys(el.dataset).forEach(key => {
           if (key.startsWith('style')) {
             // data-styleColor -> --color o color

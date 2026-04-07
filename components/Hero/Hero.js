@@ -1,56 +1,40 @@
 /**
  * Hero Component
- * Composes Button components for CTA buttons
- * Renders template structure with dynamic content
+ * Uses data-* directives for reactivity
  */
 
 class Hero extends SimpleComponent {
     constructor(selector, props = {}) {
-        super(selector, {})
-        this._props = {
-            title: 'Vanilla JS Framework',
-            subtitle: 'Zero dependencies. Security first. Production ready infrastructure for modern web apps.',
-            buttons: [
-                { label: 'Install', href: 'https://npmjs.com/package/@odineck/elite-ui', variant: 'primary', target: '_blank' },
-                { label: 'Example', href: 'example.html', variant: 'secondary' }
-            ],
-            onButtonClick: null,
+        super(selector, {
+            title: props.title || 'Vanilla JS Framework',
+            subtitle: props.subtitle || 'Zero dependencies. Security first. Production ready infrastructure for modern web apps.',
+            buttons: props.buttons || [],
             ...props
-        }
+        })
+        this._props = { ...props }
     }
 
     async render() {
         if (!this.el) return
-
-        const { title, subtitle } = this._props
-
-        // Cargar template con valores dinámicos
-        this.el.innerHTML = await this.loadTemplate('Hero', { title, subtitle })
+        this.el.innerHTML = await this.loadTemplate('Hero')
     }
 
     onMount() {
-        this.renderButtons()
+        this._renderButtons()
     }
 
-    renderButtons() {
-        const { buttons, onButtonClick } = this._props
-        const buttonsContainer = this.el.querySelector('#hero-buttons-container')
-
-        if (!buttonsContainer) return
-
-        buttons.forEach(btnProps => {
-            const btnWrapper = document.createElement('div')
-            buttonsContainer.appendChild(btnWrapper)
-
-            // Create Button component with click callback
-            const button = this.registerChild(new Button(btnWrapper, {
-                ...btnProps,
-                onClick: (e) => {
-                    e.preventDefault()
-                    onButtonClick?.(btnProps, e)
-                }
-            }))
-            button.mount()
+    _renderButtons() {
+        const outlet = this.el.querySelector('[data-outlet="buttons"]')
+        if (!outlet) return
+        
+        outlet.innerHTML = ''
+        this._state.buttons.forEach(btn => {
+            const a = document.createElement('a')
+            a.href = btn.href
+            a.target = btn.target || '_self'
+            a.className = `px-6 py-3 rounded-lg font-semibold transition-all hover:-translate-y-0.5 hover:shadow-lg ${btn.variant === 'secondary' ? 'bg-zinc-200 hover:bg-zinc-300 text-zinc-900 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-zinc-100' : 'bg-green-600 hover:bg-green-700 text-white'}`
+            a.textContent = btn.label
+            outlet.appendChild(a)
         })
     }
 }

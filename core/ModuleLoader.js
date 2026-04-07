@@ -64,8 +64,8 @@ class ModuleLoader {
   async loadComponent(name, config = {}) {
     const base = `components/${name}`
 
-    // Cargar CSS si existe
-    await this._loadCSS(`${base}/${name}.css`)
+    // Cargar CSS si existe (skip since we're using Tailwind)
+    // await this._loadCSS(`${base}/${name}.css`)
 
     // Cargar JS
     await this._loadScript(`${base}/${name}.js`)

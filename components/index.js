@@ -2,28 +2,19 @@
  * Components Registry
  * Registro global de componentes reutilizables
  * 
- * Para agregar un componente:
- * 1. Crear carpeta en components/NombreComponente/
- * 2. Agregar entrada aquí
- * 3. El ModuleLoader cargará automáticamente:
- *    - components/NombreComponente/NombreComponente.css
- *    - components/NombreComponente/NombreComponente.js
+ * Structure: components/Name/Name.js, Name.html
+ * ModuleLoader auto-loads CSS and JS for each entry
  */
 
 window.__eliteComponents = {
   Button: true,
+  Link: true,
+  Layout: true,
+  NavTab: true,
   Hero: true,
   Counter: true,
   ThemeToggle: true,
   CodeCard: true,
   FeatureCard: true,
-  FormCard: true,
-  TabNavigation: true,
-  OverviewTab: true,
-  ComponentsTab: true,
-  HttpTab: true,
-  SchemaTab: true,
-  ValidatorsTab: true,
-  DebugTab: true,
-  RouterTab: true
+  FormCard: true
 }
