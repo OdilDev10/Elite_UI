@@ -13,9 +13,9 @@ class NavTab extends SimpleComponent {
         this._props = { onChange: null, ...props }
     }
 
-    async render() {
+    render() {
         if (!this.el) return
-        this.el.innerHTML = await this.loadTemplate('NavTab')
+        this.el.innerHTML = this.loadTemplate('NavTab')
     }
 
     onMount() {

@@ -15,10 +15,10 @@ class ThemeToggle extends SimpleComponent {
         this._props = { onToggle: null, ...props }
     }
 
-    async render() {
+    render() {
         if (!this.el) return
         document.documentElement.setAttribute('data-theme', this.state.theme)
-        this.el.innerHTML = await this.loadTemplate('ThemeToggle')
+        this.el.innerHTML = this.loadTemplate('ThemeToggle')
     }
 
     onMount() {

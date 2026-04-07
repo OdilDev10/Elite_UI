@@ -14,9 +14,9 @@ class Hero extends SimpleComponent {
         this._props = { ...props }
     }
 
-    async render() {
+    render() {
         if (!this.el) return
-        this.el.innerHTML = await this.loadTemplate('Hero')
+        this.el.innerHTML = this.loadTemplate('Hero')
     }
 
     onMount() {

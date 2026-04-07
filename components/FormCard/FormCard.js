@@ -14,9 +14,9 @@ class FormCard extends SimpleComponent {
         this._props = { onSubmit: null, ...props }
     }
 
-    async render() {
+    render() {
         if (!this.el) return
-        this.el.innerHTML = await this.loadTemplate('FormCard')
+        this.el.innerHTML = this.loadTemplate('FormCard')
     }
 
     handleSubmit(e) {

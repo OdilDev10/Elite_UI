@@ -12,10 +12,10 @@ class CodeCard extends SimpleComponent {
         })
     }
 
-    async render() {
+    render() {
         if (!this.el) return
         this.el.className = 'col-span-full bg-zinc-900 text-white rounded-xl p-5'
-        this.el.innerHTML = await this.loadTemplate('CodeCard')
+        this.el.innerHTML = this.loadTemplate('CodeCard')
     }
 }
 

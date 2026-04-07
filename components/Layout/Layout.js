@@ -17,9 +17,9 @@ class Layout extends SimpleComponent {
         this._mountedOutlets = {}
     }
 
-    async render() {
+    render() {
         if (!this.el) return
-        this.el.innerHTML = await this.loadTemplate('Layout', this._props)
+        this.el.innerHTML = this.loadTemplate('Layout')
     }
 
     onMount() {

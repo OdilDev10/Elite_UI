@@ -14,9 +14,9 @@ class Counter extends SimpleComponent {
         this._props = { step: 1, onCountChange: null, ...props }
     }
 
-    async render() {
+    render() {
         if (!this.el) return
-        this.el.innerHTML = await this.loadTemplate('Counter')
+        this.el.innerHTML = this.loadTemplate('Counter')
     }
 
     increment() {

@@ -13,9 +13,9 @@ class Button extends SimpleComponent {
         this._props = { onClick: null, ...props }
     }
 
-    async render() {
+    render() {
         if (!this.el) return
-        this.el.innerHTML = await this.loadTemplate('Button')
+        this.el.innerHTML = this.loadTemplate('Button')
     }
 
     handleClick(e) {

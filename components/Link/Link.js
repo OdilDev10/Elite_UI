@@ -14,9 +14,9 @@ class Link extends SimpleComponent {
         this._props = { onClick: null, ...props }
     }
 
-    async render() {
+    render() {
         if (!this.el) return
-        this.el.innerHTML = await this.loadTemplate('Link')
+        this.el.innerHTML = this.loadTemplate('Link')
     }
 
     handleClick(e) {

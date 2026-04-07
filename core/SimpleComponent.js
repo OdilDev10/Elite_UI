@@ -244,7 +244,7 @@ class SimpleComponent {
   /**
    * Load template from DOM (no fetch for file:// compatibility)
    */
-  async loadTemplate(templateId) {
+  loadTemplate(templateId) {
     const fullId = `tmpl-${templateId}`
     const tmpl = document.getElementById(fullId)
     
@@ -448,7 +448,8 @@ class SimpleComponent {
     try {
       const state = this._state
       const props = this._props
-      return new Function('state', 'props', `return (${expr})`)(state, props)
+      // Usamos 'with' para que las claves de state y props estén disponibles en el scope de la expresión
+      return new Function('state', 'props', `with(props) { with(state) { return (${expr}) } }`)(state, props)
     } catch (e) {
       console.warn(`[SimpleComponent] expression eval error: "${expr}"`, e.message)
       return undefined
@@ -563,11 +564,11 @@ class SimpleComponent {
         }
       })
 
-      // data-html="key": renderiza HTML (⚠️ XSS risk - solo con contenido seguro)
+      // data-html: renderiza el resultado de la expresión como HTML (⚠️ XSS risk)
       root.querySelectorAll('[data-html]').forEach(el => {
-        const key = el.dataset.html
-        const val = this._state[key] ?? this._props?.[key] ?? ''
-        el.innerHTML = val
+        const expr = el.dataset.html
+        const val = this._evalExpr(expr)
+        el.innerHTML = val ?? ''
       })
 
       // data-disabled="expr": desactiva elemento
@@ -810,3 +811,4 @@ class SimpleComponent {
 }
 
 window.SimpleComponent = SimpleComponent
+= SimpleComponent
