@@ -1,0 +1,49 @@
+/* Button Component - BEM */
+
+.hero-btn {
+    padding: 0.9rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-block;
+    cursor: pointer;
+    border: none;
+}
+
+.hero-btn-primary {
+    background: var(--accent);
+    color: white;
+}
+
+.hero-btn-primary:hover {
+    background: var(--accent-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(22, 163, 74, 0.25);
+}
+
+.hero-btn-secondary {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1.5px solid var(--border);
+}
+
+.hero-btn-secondary:hover {
+    background: var(--border);
+    border-color: var(--text-primary);
+    transform: translateY(-3px);
+}
+
+[data-theme="dark"] .hero-btn-secondary:hover {
+    background: var(--bg-secondary);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+@media (max-width: 640px) {
+    .hero-btn {
+        width: 100%;
+        text-align: center;
+    }
+}

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EliteUI - Examples</title>
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="example-page.css">
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">EliteUI / Examples</div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <a href="/#/" style="font-size: 0.8rem; color: var(--text-secondary); text-decoration: none;">← Back</a>
+                <div id="theme-toggle-container"></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="bento-grid" id="example-grid">
+            <!-- Components mount here dynamically -->
+        </section>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <p>&copy; 2026 Odineck</p>
+            <div class="footer-links">
+                <a href="https://odineck.com" target="_blank">Odineck</a>
+                <a href="https://exonoor.com" target="_blank">Exonoor</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Framework Core -->
+    <script src="../../components/index.js"></script>
+    <script type="module" src="../../core/index.js"></script>
+    <script type="module" src="../../core/ModuleLoader.js"></script>
+    
+    <!-- Page-specific script -->
+    <script type="module" src="example-page.js"></script>
+</body>
+</html>

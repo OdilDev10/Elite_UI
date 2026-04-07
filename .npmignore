@@ -1,0 +1,9 @@
+examples/
+*.md
+!README.md
+.git
+.gitignore
+.npmignore
+node_modules/
+*.log
+.DS_Store

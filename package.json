@@ -1,0 +1,40 @@
+{
+  "name": "@odineck/elite-ui",
+  "version": "1.0.0",
+  "description": "Production-ready vanilla JavaScript framework - zero runtime dependencies",
+  "main": "core/index.js",
+  "module": "core/index.js",
+  "files": [
+    "core",
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "bundle": "node scripts/bundle.js",
+    "test": "echo 'Tests coming soon'"
+  },
+  "keywords": [
+    "vanilla-js",
+    "framework",
+    "reactive",
+    "components",
+    "router",
+    "state-management",
+    "security",
+    "form-validation",
+    "zero-dependencies"
+  ],
+  "author": "Odineck",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/odineck/elite-ui.git"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
