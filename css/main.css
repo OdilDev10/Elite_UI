@@ -7,45 +7,77 @@
 @layer base {
     html {
         scroll-behavior: smooth;
-        font-size: 15px;
+        font-size: 13.5px; /* Even more compact base font */
     }
 
     body {
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
         -webkit-font-smoothing: antialiased;
-        letter-spacing: -0.015em;
+        -moz-osx-font-smoothing: grayscale;
+        letter-spacing: -0.02em; /* Tighter letter spacing for premium look */
         background-color: var(--bg);
         color: var(--text);
+        line-height: 1.5;
     }
 
-    /* CSS Variables for theming - override Tailwind's dark: classes */
     :root {
         --bg: #fafafa;
-        --text: #27272a;
+        --text: #09090b;
         --text-muted: #71717a;
-        --border: #f1f1f4;
+        --border: rgba(0, 0, 0, 0.06);
         --card-bg: #ffffff;
         --accent: #10b981;
+        --accent-soft: rgba(16, 185, 129, 0.08);
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+        --shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.02);
+        --shadow-md: 0 8px 12px -3px rgba(0, 0, 0, 0.04), 0 3px 6px -2px rgba(0, 0, 0, 0.02);
+        --radius-premium: 16px; /* Slightly tighter radius for compact look */
     }
 
     [data-theme="dark"] {
         --bg: #09090b;
-        --text: #fafafa;
+        --text: #f4f4f5;
         --text-muted: #a1a1aa;
-        --border: #27272a;
-        --card-bg: #18181b;
+        --border: rgba(255, 255, 255, 0.05);
+        --card-bg: #111113;
         --accent: #10b981;
+        --accent-soft: rgba(16, 185, 129, 0.12);
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+        --shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.3), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+        --shadow-md: 0 12px 20px -5px rgba(0, 0, 0, 0.4), 0 6px 8px -5px rgba(0, 0, 0, 0.2);
     }
 }
 
 @layer components {
-    .reveal-1 { animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards; opacity: 0; }
-    .reveal-2 { animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards; opacity: 0; }
-    .reveal-3 { animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards; opacity: 0; }
-    .reveal-4 { animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards; opacity: 0; }
-    .reveal-5 { animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards; opacity: 0; }
+    .reveal-1 { animation: reveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.04s forwards; opacity: 0; }
+    .reveal-2 { animation: reveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.12s forwards; opacity: 0; }
+    .reveal-3 { animation: reveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.20s forwards; opacity: 0; }
+    .reveal-4 { animation: reveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.28s forwards; opacity: 0; }
+    .reveal-5 { animation: reveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.36s forwards; opacity: 0; }
 
-    /* Override Tailwind dark: classes with CSS variables */
+    .bento-card {
+        @apply relative overflow-hidden transition-all duration-300 border;
+        background-color: var(--card-bg);
+        border-color: var(--border);
+        border-radius: var(--radius-premium);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .bento-card:hover {
+        box-shadow: var(--shadow-md);
+        border-color: rgba(16, 185, 129, 0.2);
+        transform: translateY(-1.5px);
+    }
+
+    .glass {
+        @apply backdrop-blur-lg bg-white/70 dark:bg-zinc-950/70;
+    }
+
+    .btn-premium {
+        @apply relative inline-flex items-center justify-center px-4 py-2 rounded-xl font-bold transition-all duration-200 active:scale-[0.96] disabled:opacity-30;
+    }
+
+    /* Override Tailwind dark: classes to use our theme variables for consistency */
     .dark .dark\:bg-zinc-900 { background-color: var(--card-bg) !important; }
     .dark .dark\:bg-zinc-800 { background-color: var(--card-bg) !important; }
     .dark .dark\:bg-zinc-950 { background-color: var(--bg) !important; }
@@ -56,8 +88,6 @@
     .dark .dark\:border-zinc-700 { border-color: var(--border) !important; }
     .dark .dark\:border-zinc-800 { border-color: var(--border) !important; }
     .dark .dark\:text-emerald-400 { color: var(--accent) !important; }
-
-    /* Card backgrounds */
     .dark .dark\:bg-zinc-50 { background-color: var(--bg) !important; }
     .dark .dark\:bg-zinc-900\/40 { background-color: var(--card-bg) !important; }
 }
@@ -65,7 +95,7 @@
 @keyframes reveal {
     from {
         opacity: 0;
-        transform: translateY(20px) scale(0.98);
+        transform: translateY(10px) scale(0.99);
     }
     to {
         opacity: 1;
@@ -75,16 +105,20 @@
 
 @keyframes float {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
+    50% { transform: translateY(-5px); }
 }
 
 .animate-float {
-    animation: float 3s ease-in-out infinite;
+    animation: float 4s ease-in-out infinite;
 }
 
-::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 9999px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(16, 185, 129, 0.4); }
+::-webkit-scrollbar-thumb { 
+    background: #e4e4e7; 
+    border-radius: 10px;
+}
+.dark ::-webkit-scrollbar-thumb { background: #27272a; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
 [data-template] { display: none; }

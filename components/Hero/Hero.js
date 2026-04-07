@@ -12,6 +12,14 @@ class Hero extends SimpleComponent {
             ...props
         })
         this._props = { ...props }
+        this._processProps()
+    }
+
+    _processProps() {
+        // Extract buttons from props if provided as array
+        if (Array.isArray(this._props.buttons)) {
+            this._state.buttons = this._props.buttons
+        }
     }
 
     render() {
@@ -25,7 +33,7 @@ class Hero extends SimpleComponent {
 
     _renderButtons() {
         const outlet = this.el.querySelector('[data-outlet="buttons"]')
-        if (!outlet) return
+        if (!outlet || !this._state.buttons) return
         
         outlet.innerHTML = ''
         this._state.buttons.forEach(btn => {

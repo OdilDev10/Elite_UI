@@ -48,35 +48,69 @@
 
     <!-- Template: Home Page -->
     <template id="tmpl-page-home">
-        <section class="max-w-6xl mx-auto px-6 py-8">
-            <div class="p-6">
-                <h1 class="text-4xl font-bold mb-4" data-text="title"></h1>
-                <p class="text-zinc-600 dark:text-zinc-400" data-text="subtitle"></p>
+        <section class="max-w-6xl mx-auto px-6 py-12">
+            <div class="mb-12 reveal-1 text-center sm:text-left">
+                <h1 class="text-5xl font-extrabold tracking-tight mb-4 text-zinc-900 dark:text-zinc-50 leading-[1.1]" data-text="title"></h1>
+                <p class="text-lg text-zinc-500 dark:text-zinc-400 max-w-2xl" data-text="subtitle"></p>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-                <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5">
-                    <h3 class="font-bold text-sm mb-2">Components</h3>
-                    <p class="text-sm text-zinc-600 dark:text-zinc-400">Create reusable components in <code class="text-xs">components/</code></p>
+            <div class="bento-grid mt-10">
+                <!-- Main Feature Card -->
+                <div class="bento-card col-span-1 md:col-span-2 row-span-2 p-8 reveal-2 flex flex-col justify-between group">
+                    <div>
+                        <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Components</h3>
+                        <p class="text-zinc-500 dark:text-zinc-400">Create reusable components in <code class="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded">components/</code>. Build complex UIs from simple primitives.</p>
+                    </div>
+                    <div class="mt-8 pt-6 border-t border-zinc-100 dark:border-zinc-800/50">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-green-600 dark:text-green-400">Architecture</span>
+                    </div>
                 </div>
-                <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5">
-                    <h3 class="font-bold text-sm mb-2">Routing</h3>
-                    <p class="text-sm text-zinc-600 dark:text-zinc-400">Add pages in <code class="text-xs">pages/</code></p>
+
+                <!-- Secondary Cards -->
+                <div class="bento-card col-span-1 md:col-span-2 p-6 reveal-3 group">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <h3 class="font-bold text-lg mb-2">Routing</h3>
+                            <p class="text-sm text-zinc-500 dark:text-zinc-400">Declarative routing that just works. Add pages in <code class="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded">pages/</code></p>
+                        </div>
+                        <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center group-hover:rotate-12 transition-transform">
+                            <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                            </svg>
+                        </div>
+                    </div>
                 </div>
-                <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5">
-                    <h3 class="font-bold text-sm mb-2">Styling</h3>
-                    <p class="text-sm text-zinc-600 dark:text-zinc-400">Customize in <code class="text-xs">css/main.css</code></p>
+
+                <div class="bento-card col-span-1 md:col-span-2 p-6 reveal-4 group">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <h3 class="font-bold text-lg mb-2">Styling</h3>
+                            <p class="text-sm text-zinc-500 dark:text-zinc-400">Full Tailwind CSS support with custom premium theme. Edit <code class="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded">main.css</code></p>
+                        </div>
+                        <div class="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <svg class="w-4 h-4 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-3" />
+                            </svg>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
     </template>
 
     <!-- Header Shell -->
-    <header class="sticky top-0 z-50 bg-white/80 dark:bg-black/80 backdrop-blur-sm border-b border-zinc-200 dark:border-zinc-800">
-        <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-            <a href="#/" class="flex items-center gap-2 font-bold text-xl tracking-tight">
-                <span class="w-2.5 h-2.5 bg-green-600 rounded"></span>
-                My App
+    <header class="sticky top-0 z-50 glass border-b border-zinc-200/50 dark:border-zinc-800/50">
+        <div class="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
+            <a href="#/" class="flex items-center gap-2 font-bold text-lg tracking-tight hover:opacity-80 transition-opacity">
+                <div class="w-6 h-6 bg-green-600 rounded-lg flex items-center justify-center shadow-sm">
+                    <div class="w-2 h-2 bg-white rounded-full"></div>
+                </div>
+                <span>Exonoor</span>
             </a>
             <div id="component-theme-toggle"></div>
         </div>

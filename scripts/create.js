@@ -153,6 +153,11 @@ async function createProject(projectName) {
         )
 
         await copyFile(
+            join(TEMPLATE_DIR, 'pages', 'home', 'home.html'),
+            join(targetDir, 'pages', 'home', 'home.html')
+        )
+
+        await copyFile(
             join(TEMPLATE_DIR, 'pages', 'index.js'),
             join(targetDir, 'pages', 'index.js')
         )
