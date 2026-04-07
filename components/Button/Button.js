@@ -1,6 +1,11 @@
 /**
  * Button Component
- * Reusable button with primary/secondary variant
+ * Simple button component (para links, usar Link.js)
+ *
+ * Props:
+ * - label: texto del botón
+ * - variant: 'primary' | 'secondary' (default: 'primary')
+ * - onClick: callback cuando se hace click (opcional)
  */
 
 class Button extends SimpleComponent {
@@ -8,46 +13,25 @@ class Button extends SimpleComponent {
         super(selector, {})
         this._props = {
             label: 'Button',
-            href: '#',
             variant: 'primary',
-            target: null,
             onClick: null,
             ...props
         }
     }
 
-    onMount() {
-        this.setupEventListeners()
-    }
-
-    setupEventListeners() {
-        const btn = this.el.querySelector('a, button')
-        if (btn && this._props.onClick) {
-            btn.addEventListener('click', this._props.onClick)
-        }
-    }
-
-    render() {
+    async render() {
         if (!this.el) return
+        this.el.innerHTML = await this.loadTemplate('Button', {
+            variant: this._props.variant,
+            label: this._props.label
+        })
+    }
 
-        const { label, href, variant, target } = this._props
-        const isLink = href && href !== '#'
-
-        const tag = isLink ? 'a' : 'button'
-        const attrs = isLink
-            ? `href="${href}" ${target ? `target="${target}"` : ''}`
-            : 'type="button"'
-
-        this.el.innerHTML = `
-            <${tag}
-                class="hero-btn hero-btn-${variant}"
-                ${attrs}
-            >
-                ${label}
-            </${tag}>
-        `
-
-        this.setupEventListeners()
+    onMount() {
+        // Si tiene callback onClick, registrar listener
+        if (this._props.onClick) {
+            this.on('click', 'button', this._props.onClick)
+        }
     }
 }
 

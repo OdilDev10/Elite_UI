@@ -1,5 +1,5 @@
-<h3 class="form-title">{{title}}</h3>
-<p class="form-subtitle">{{subtitle}}</p>
+<h3 class="form-title" data-text="title"></h3>
+<p class="form-subtitle" data-text="subtitle"></p>
 <form class="form-contact" id="contact-form">
     <div class="form-group">
         <label>Name</label>
@@ -15,4 +15,9 @@
     </div>
     <button type="submit" class="btn btn-primary">Send Message</button>
 </form>
-<div class="form-response message"></div>
+<!-- Response message con directivas data-show y data-class -->
+<div class="form-response message"
+     data-show="formSubmitted"
+     data-class-success="submitSuccess">
+    Thanks! Form submitted securely.
+</div>

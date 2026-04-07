@@ -36,6 +36,9 @@ class Router {
       this._handleRouteChange()
     })
 
+    // Register as global singleton para data-link directives
+    window.$router = this
+
     // Initial route
     this._handleRouteChange()
   }

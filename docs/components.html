@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EliteUI - Components</title>
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="index.html" class="logo">EliteUI</a>
+            <a href="index.html" style="font-size: 0.8rem; color: var(--text-secondary); text-decoration: none;">← Back</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1 style="margin-bottom: 0.5rem;">Components</h1>
+        <p style="color: var(--text-secondary); margin-bottom: 2rem;">Reactive components with lifecycle hooks and state management</p>
+
+        <div class="bento-grid">
+            <div class="bento-card" style="grid-column: span 12;">
+                <h3>SimpleComponent</h3>
+                <div class="code-content">
+                    <pre><span class="code-inline">class MyComponent extends SimpleComponent</span> {
+    constructor(selector, props = {}) {
+        <span class="code-inline">super</span>(selector)
+        this._props = {
+            title: 'Default',
+            ...props
+        }
+    }
+
+    <span class="code-inline">onMount()</span> {
+        // Called after render
+    }
+
+    <span class="code-inline">render()</span> {
+        this.el.innerHTML = `&lt;h1&gt;${this._props.title}&lt;/h1&gt;`
+    }
+}
+
+<span class="code-inline">new MyComponent('#app', { title: 'Hello' })</span>.<span class="code-inline">mount()</span></pre>
+                </div>
+            </div>
+
+            <div class="bento-card" style="grid-column: span 6;">
+                <h3>State</h3>
+                <div class="code-content">
+                    <pre><span class="code-inline">this.state</span> // Get state
+<span class="code-inline">this.setState({ key: value })</span> // Update
+<span class="code-inline">this.subscribe(cb)</span> // Listen changes</pre>
+                </div>
+            </div>
+
+            <div class="bento-card" style="grid-column: span 6;">
+                <h3>Lifecycle</h3>
+                <div class="code-content">
+                    <pre><span class="code-inline">onMount()</span> // After render
+<span class="code-inline">onUnmount()</span> // Cleanup
+<span class="code-inline">onStateChange()</span> // State updated</pre>
+                </div>
+            </div>
+
+            <div class="bento-card" style="grid-column: span 6;">
+                <h3>Events</h3>
+                <div class="code-content">
+                    <pre><span class="code-inline">this.on('click', '.btn', handler)</span>
+<span class="code-inline">this.off('click', handler)</span></pre>
+                </div>
+            </div>
+
+            <div class="bento-card" style="grid-column: span 6;">
+                <h3>Effects</h3>
+                <div class="code-content">
+                    <pre><span class="code-inline">this.useEffect(() =&gt; {</span>
+    <span class="code-inline">// Side effect</span>
+    <span class="code-inline">return () =&gt; { /* cleanup */ }</span>
+<span class="code-inline">}, [dependency])</span></pre>
+                </div>
+            </div>
+
+            <div class="bento-card" style="grid-column: span 12;">
+                <h3>Child Components</h3>
+                <div class="code-content">
+                    <pre>// Register child for auto-cleanup
+<span class="code-inline">const child = this.registerChild(new ChildComponent(el))</span>
+child.mount()
+// On unmount, all children auto-unmount</pre>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

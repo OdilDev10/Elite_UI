@@ -1,0 +1,88 @@
+<div class="space-y-6 py-8">
+    <h2 class="text-2xl font-bold">Router</h2>
+
+    <div class="bento-card">
+        <h3 class="font-semibold mb-4">Configuration (pages/router.js)</h3>
+        <div class="bento-card code-card">
+            <pre class="code-content">export default {
+  routes: [
+    { path: '/', tab: 'overview' },
+    { path: '/docs/:section', handler: 'DocsPage' }
+  ],
+  guards: [
+    (to, from) => isAuthenticated() || router.navigate('/login')
+  ],
+  middleware: [
+    (path) => console.log('Navigating to:', path)
+  ]
+}</pre>
+        </div>
+    </div>
+
+    <div class="bento-card">
+        <h3 class="font-semibold mb-4">Features</h3>
+        <ul class="space-y-2 text-sm">
+            <li class="flex items-center gap-2">
+                <span class="w-2 h-2 bg-accent rounded-full"></span>
+                Hash-based routing (default) or HTML5 history
+            </li>
+            <li class="flex items-center gap-2">
+                <span class="w-2 h-2 bg-accent rounded-full"></span>
+                Path parameters: /users/:id
+            </li>
+            <li class="flex items-center gap-2">
+                <span class="w-2 h-2 bg-accent rounded-full"></span>
+                Query params: /users?page=1&sort=name
+            </li>
+            <li class="flex items-center gap-2">
+                <span class="w-2 h-2 bg-accent rounded-full"></span>
+                Navigation guards
+            </li>
+            <li class="flex items-center gap-2">
+                <span class="w-2 h-2 bg-accent rounded-full"></span>
+                Middleware support
+            </li>
+            <li class="flex items-center gap-2">
+                <span class="w-2 h-2 bg-accent rounded-full"></span>
+                XSS sanitization on all route params
+            </li>
+        </ul>
+    </div>
+
+    <div class="bento-card">
+        <h3 class="font-semibold mb-4">Navigation API</h3>
+        <div class="bento-card code-card">
+            <pre class="code-content">// Navigate
+router.navigate('/users/123')
+
+// Query params
+router.setQueryParams({ page: 2, sort: 'date' })
+router.getQueryParams() // { page: '2', sort: 'date' }
+
+// Subscribe to changes
+router.subscribe((route) => {
+  console.log('Now at:', route.path)
+})
+
+// Get current route
+const current = router.getCurrentRoute()</pre>
+        </div>
+    </div>
+
+    <div class="bento-card">
+        <h3 class="font-semibold mb-4">Route Parameters</h3>
+        <div class="bento-card code-card">
+            <pre class="code-content">// Define route with params
+{ path: '/posts/:id/comments/:commentId' }
+
+// Navigate with params
+router.navigate('/posts/42/comments/99')
+
+// Access params in handler
+handler(params) {
+  console.log(params.id)        // '42'
+  console.log(params.commentId) // '99'
+}</pre>
+        </div>
+    </div>
+</div>

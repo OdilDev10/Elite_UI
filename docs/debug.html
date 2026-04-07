@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EliteUI - $debug</title>
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="index.html" class="logo">EliteUI</a>
+            <a href="index.html" style="font-size: 0.8rem; color: var(--text-secondary); text-decoration: none;">← Back</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1 style="margin-bottom: 0.5rem;">$debug</h1>
+        <p style="color: var(--text-secondary); margin-bottom: 2rem;">Debug tools and lifecycle tracking</p>
+
+        <div class="bento-grid">
+            <div class="bento-card" style="grid-column: span 6;">
+                <h3>Logging</h3>
+                <div class="code-content">
+                    <pre><span class="code-inline">$debug.log('Info message')</span>
+<span class="code-inline">$debug.warn('Warning')</span>
+<span class="code-inline">$debug.error('Error', err)</span>
+<span class="code-inline">$debug.info('Details')</span></pre>
+                </div>
+            </div>
+
+            <div class="bento-card" style="grid-column: span 6;">
+                <h3>Performance</h3>
+                <div class="code-content">
+                    <pre><span class="code-inline">$debug.time('myTimer')</span>
+<span class="code-inline">// ... code ...</span>
+<span class="code-inline">$debug.timeEnd('myTimer')</span> // Logs ms</pre>
+                </div>
+            </div>
+
+            <div class="bento-card" style="grid-column: span 6;">
+                <h3>Lifecycle</h3>
+                <div class="code-content">
+                    <pre><span class="code-inline">$debug.trackComponent('Hero', 'mount')</span>
+<span class="code-inline">$debug.getLifecycle('Hero')</span></pre>
+                </div>
+            </div>
+
+            <div class="bento-card" style="grid-column: span 6;">
+                <h3>DevTools Panel</h3>
+                <div class="code-content">
+                    <pre><span class="code-inline">$debug.panel()</span> // View all logs
+<span class="code-inline">$debug.exportLogs()</span>
+<span class="code-inline">$debug.clearLogs()</span></pre>
+                </div>
+            </div>
+
+            <div class="bento-card" style="grid-column: span 12;">
+                <h3>Auto-enabled</h3>
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">$debug auto-enables on localhost or when ?debug in URL. Automatically tracks component lifecycle (mount, unmount, render, errors) for all SimpleComponent instances.</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="../core/debug.js"></script>
+</body>
+</html>

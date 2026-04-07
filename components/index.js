@@ -17,5 +17,13 @@ window.__eliteComponents = {
   ThemeToggle: true,
   CodeCard: true,
   FeatureCard: true,
-  FormCard: true
+  FormCard: true,
+  TabNavigation: true,
+  OverviewTab: true,
+  ComponentsTab: true,
+  HttpTab: true,
+  SchemaTab: true,
+  ValidatorsTab: true,
+  DebugTab: true,
+  RouterTab: true
 }

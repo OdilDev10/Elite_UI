@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EliteUI - $http</title>
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="index.html" class="logo">EliteUI</a>
+            <a href="index.html" style="font-size: 0.8rem; color: var(--text-secondary); text-decoration: none;">← Back</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1 style="margin-bottom: 0.5rem;">$http</h1>
+        <p style="color: var(--text-secondary); margin-bottom: 2rem;">Simple HTTP client with interceptors</p>
+
+        <div class="bento-grid">
+            <div class="bento-card" style="grid-column: span 12;">
+                <h3>Basic Usage</h3>
+                <div class="code-content">
+                    <pre><span class="code-inline">const data = await $http('/api/users')</span>
+
+<span class="code-inline">const user = await $http('/api/users', { name: 'Juan' })</span>
+
+<span class="code-inline">await $http('/api/users/1', { name: 'Pedro' })</span>
+
+<span class="code-inline">await $http('/api/users/1', { method: 'DELETE' })</span></pre>
+                </div>
+            </div>
+
+            <div class="bento-card" style="grid-column: span 12;">
+                <h3>Custom Instance</h3>
+                <div class="code-content">
+                    <pre><span class="code-inline">const api = $http.create({ baseUrl: '/api' })</span>
+<span class="code-inline">await api('/users')</span></pre>
+                </div>
+            </div>
+
+            <div class="bento-card" style="grid-column: span 12;">
+                <h3>Interceptors</h3>
+                <div class="code-content">
+                    <pre><span class="code-inline">$http.interceptors.request.use(async (config) =&gt; {</span>
+    const token = localStorage.getItem('token')
+    if (token) config.headers.Authorization = `Bearer ${token}`
+    return config
+<span class="code-inline">})</span>
+
+<span class="code-inline">$http.interceptors.response.use(</span>
+    (data) => data,
+    (error) => {
+        if (error.status === 401) redirect('/login')
+        throw error
+    }
+<span class="code-inline">)</span></pre>
+                </div>
+            </div>
+
+            <div class="bento-card" style="grid-column: span 6;">
+                <h3>Options</h3>
+                <p>timeout, headers, credentials</p>
+            </div>
+
+            <div class="bento-card" style="grid-column: span 6;">
+                <h3>Live Demo</h3>
+                <button id="demo-btn" class="btn btn-primary">Fetch /todos/1</button>
+                <div id="demo-result" class="message mt-4"></div>
+            </div>
+        </div>
+    </body>
+
+    <script src="../core/http.js"></script>
+    <script>
+        document.getElementById('demo-btn').addEventListener('click', async () => {
+            const btn = document.getElementById('demo-btn')
+            const result = document.getElementById('demo-result')
+            btn.disabled = true
+            btn.textContent = 'Loading...'
+
+            try {
+                const data = await $http('https://jsonplaceholder.typicode.com/todos/1')
+                result.textContent = JSON.stringify(data)
+                result.className = 'message show message-success'
+            } catch (e) {
+                result.textContent = e.message
+                result.className = 'message show message-error'
+            } finally {
+                btn.disabled = false
+                btn.textContent = 'Fetch /todos/1'
+            }
+        })
+    </script>
+</html>

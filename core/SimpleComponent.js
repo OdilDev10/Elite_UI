@@ -78,6 +78,7 @@ class SimpleComponent {
 
     this.onStateChange?.(this._state, prevState)
     this.render()
+    this._processDirectives(this.el)
     this._notifySubscribers(prevState, this._state)
   }
 
@@ -382,6 +383,7 @@ class SimpleComponent {
     try {
       $debug?.trackComponent(componentName, 'mount', { selector: this.el?.id || this.el?.className || 'unknown' })
       this.render()
+      this._processDirectives(this.el)
       this.onMount()
       this._mounted = true
       $debug?.trackComponent(componentName, 'mounted')
@@ -458,6 +460,375 @@ class SimpleComponent {
       this.render()
     } catch (e) {
       this._handleError(e)
+    }
+  }
+
+  /**
+   * Evalúa una expresión en el contexto del estado y props del componente
+   * @param {string} expr - Expresión JavaScript (ej: "count > 5" o "name === 'John'")
+   * @returns {any} Resultado de la evaluación
+   */
+  _evalExpr(expr) {
+    try {
+      const state = this._state
+      const props = this._props
+      return new Function('state', 'props', `return (${expr})`)(state, props)
+    } catch (e) {
+      console.warn(`[SimpleComponent] expression eval error: "${expr}"`, e.message)
+      return undefined
+    }
+  }
+
+  /**
+   * Procesa directivas data-* en el DOM
+   * Se llama automáticamente después de cada render()
+   *
+   * Directivas soportadas:
+   * - data-if="expr" → muestra/oculta con display:none
+   * - data-show="expr" → muestra/oculta con visibility (mantiene layout)
+   * - data-text="key" → escribe state[key] como textContent
+   * - data-bind="key" → two-way binding en inputs
+   * - data-class-X="expr" → toggle de clase X según expr
+   * - data-onclick="method" → llama this[method](e) al hacer click
+   * - data-link="/path" → navega sin reload via router
+   */
+  _processDirectives(root = this.el) {
+    if (!root) return
+
+    try {
+      // data-if: muestra/oculta con display:none
+      root.querySelectorAll('[data-if]').forEach(el => {
+        el.style.display = this._evalExpr(el.dataset.if) ? '' : 'none'
+      })
+
+      // data-show: muestra/oculta con visibility (mantiene layout)
+      root.querySelectorAll('[data-show]').forEach(el => {
+        el.style.visibility = this._evalExpr(el.dataset.show) ? '' : 'hidden'
+      })
+
+      // data-text: escribe state[key] como textContent (XSS-safe)
+      root.querySelectorAll('[data-text]').forEach(el => {
+        const key = el.dataset.text
+        const val = this._state[key] ?? this._props?.[key] ?? ''
+        el.textContent = val
+      })
+
+      // data-bind: two-way binding (solo primera vez, luego los listeners persisten)
+      root.querySelectorAll('[data-bind]').forEach(el => {
+        const key = el.dataset.bind
+        const isFormElement = el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT'
+
+        if (isFormElement) {
+          el.value = this._state[key] ?? ''
+
+          // Registrar listener solo una vez (flag privado en el elemento)
+          if (!el.__eliteDirectiveBound) {
+            el.__eliteDirectiveBound = true
+            el.addEventListener('input', e => {
+              this.setState({ [key]: e.target.value })
+            })
+          }
+        }
+      })
+
+      // data-class-X="expr": toggle de clase según expresión
+      root.querySelectorAll('[data-*]').forEach(el => {
+        Object.keys(el.dataset).forEach(key => {
+          if (key.startsWith('class')) {
+            // Convertir camelCase a kebab-case para nombres de clase
+            // data-classActive -> className "active"
+            // data-classIsPrimary -> className "is-primary"
+            const className = key
+              .slice(5)  // "classActive" -> "Active"
+              .replace(/([A-Z])/g, '-$1')  // "Active" -> "-Active"
+              .toLowerCase()  // "-active"
+              .replace(/^-/, '')  // "active"
+
+            const shouldAdd = this._evalExpr(el.dataset[key])
+            el.classList.toggle(className, !!shouldAdd)
+          }
+        })
+      })
+
+      // data-onclick="method": registra click handler
+      root.querySelectorAll('[data-onclick]').forEach(el => {
+        if (!el.__eliteDirectiveOnclick) {
+          el.__eliteDirectiveOnclick = true
+          const methodName = el.dataset.onclick
+
+          el.addEventListener('click', e => {
+            if (typeof this[methodName] === 'function') {
+              try {
+                this[methodName](e)
+              } catch (err) {
+                console.error(`[SimpleComponent] onclick handler error (${methodName}):`, err)
+              }
+            } else {
+              console.warn(`[SimpleComponent] method not found: ${methodName}`)
+            }
+          })
+        }
+      })
+
+      // data-link="/path": navega sin reload
+      root.querySelectorAll('[data-link]').forEach(el => {
+        if (!el.__eliteDirectiveLink) {
+          el.__eliteDirectiveLink = true
+
+          el.addEventListener('click', e => {
+            e.preventDefault()
+            const path = el.dataset.link
+            if (window.$router?.navigate) {
+              window.$router.navigate(path)
+            } else {
+              console.warn('[SimpleComponent] Router not available for data-link')
+            }
+          })
+        }
+      })
+
+      // data-html="key": renderiza HTML (⚠️ XSS risk - solo con contenido seguro)
+      root.querySelectorAll('[data-html]').forEach(el => {
+        const key = el.dataset.html
+        const val = this._state[key] ?? this._props?.[key] ?? ''
+        el.innerHTML = val
+      })
+
+      // data-disabled="expr": desactiva elemento
+      root.querySelectorAll('[data-disabled]').forEach(el => {
+        const shouldDisable = this._evalExpr(el.dataset.disabled)
+        el.disabled = !!shouldDisable
+      })
+
+      // data-value="key": establece value (lectura, no two-way)
+      root.querySelectorAll('[data-value]').forEach(el => {
+        const key = el.dataset.value
+        const val = this._state[key] ?? this._props?.[key] ?? ''
+        el.value = val
+      })
+
+      // data-checked="expr": para checkboxes/radios
+      root.querySelectorAll('[data-checked]').forEach(el => {
+        const isChecked = this._evalExpr(el.dataset.checked)
+        el.checked = !!isChecked
+      })
+
+      // data-placeholder="key": placeholder dinámico
+      root.querySelectorAll('[data-placeholder]').forEach(el => {
+        const key = el.dataset.placeholder
+        const val = this._state[key] ?? this._props?.[key] ?? ''
+        el.placeholder = val
+      })
+
+      // data-title="key": atributo title dinámico
+      root.querySelectorAll('[data-title]').forEach(el => {
+        const key = el.dataset.title
+        const val = this._state[key] ?? this._props?.[key] ?? ''
+        el.title = val
+      })
+
+      // data-href="key": href dinámico
+      root.querySelectorAll('[data-href]').forEach(el => {
+        const key = el.dataset.href
+        const val = this._state[key] ?? this._props?.[key] ?? '#'
+        el.href = val
+      })
+
+      // data-src="key": src dinámico (imágenes, iframes, etc)
+      root.querySelectorAll('[data-src]').forEach(el => {
+        const key = el.dataset.src
+        const val = this._state[key] ?? this._props?.[key] ?? ''
+        el.src = val
+      })
+
+      // data-attr-*="key": atributos dinámicos genéricos
+      // Ejemplo: data-attr-aria-label="message", data-attr-data-id="userId"
+      root.querySelectorAll('[data-*]').forEach(el => {
+        Object.keys(el.dataset).forEach(key => {
+          if (key.startsWith('attr')) {
+            // data-attrAriaLabel -> aria-label
+            // data-attrDataId -> data-id
+            const attrName = key
+              .slice(4)  // "attrAriaLabel" -> "AriaLabel"
+              .replace(/([A-Z])/g, '-$1')  // "AriaLabel" -> "-Aria-Label"
+              .toLowerCase()  // "-aria-label"
+              .replace(/^-/, '')  // "aria-label"
+
+            const val = this._evalExpr(el.dataset[key])
+            el.setAttribute(attrName, val ?? '')
+          }
+        })
+      })
+
+      // data-style-*: estilos dinámicos
+      // Ejemplo: data-style-color="color", data-style-font-size="fontSize"
+      root.querySelectorAll('[data-*]').forEach(el => {
+        Object.keys(el.dataset).forEach(key => {
+          if (key.startsWith('style')) {
+            // data-styleColor -> --color o color
+            // data-styleFontSize -> --font-size o fontSize
+            let cssKey = key
+              .slice(5)  // "styleColor" -> "Color"
+              .replace(/([A-Z])/g, '-$1')  // "Color" -> "-Color"
+              .toLowerCase()  // "-color"
+              .replace(/^-/, '')  // "color"
+
+            // Convertir kebab-case a camelCase para cssText
+            const camelKey = cssKey.replace(/-([a-z])/g, (g) => g[1].toUpperCase())
+
+            const val = this._evalExpr(el.dataset[key])
+            if (val !== undefined && val !== null) {
+              el.style[camelKey] = val
+            }
+          }
+        })
+      })
+
+      // data-onchange="method": listener para change events
+      root.querySelectorAll('[data-onchange]').forEach(el => {
+        if (!el.__eliteDirectiveOnchange) {
+          el.__eliteDirectiveOnchange = true
+          const methodName = el.dataset.onchange
+
+          el.addEventListener('change', e => {
+            if (typeof this[methodName] === 'function') {
+              try {
+                this[methodName](e)
+              } catch (err) {
+                console.error(`[SimpleComponent] onchange handler error (${methodName}):`, err)
+              }
+            }
+          })
+        }
+      })
+
+      // data-oninput="method": listener para input events
+      root.querySelectorAll('[data-oninput]').forEach(el => {
+        if (!el.__eliteDirectiveOninput) {
+          el.__eliteDirectiveOninput = true
+          const methodName = el.dataset.oninput
+
+          el.addEventListener('input', e => {
+            if (typeof this[methodName] === 'function') {
+              try {
+                this[methodName](e)
+              } catch (err) {
+                console.error(`[SimpleComponent] oninput handler error (${methodName}):`, err)
+              }
+            }
+          })
+        }
+      })
+
+      // data-onkeyup="method": listener para keyup events
+      root.querySelectorAll('[data-onkeyup]').forEach(el => {
+        if (!el.__eliteDirectiveOnkeyup) {
+          el.__eliteDirectiveOnkeyup = true
+          const methodName = el.dataset.onkeyup
+
+          el.addEventListener('keyup', e => {
+            if (typeof this[methodName] === 'function') {
+              try {
+                this[methodName](e)
+              } catch (err) {
+                console.error(`[SimpleComponent] onkeyup handler error (${methodName}):`, err)
+              }
+            }
+          })
+        }
+      })
+
+      // data-onkeydown="method": listener para keydown events
+      root.querySelectorAll('[data-onkeydown]').forEach(el => {
+        if (!el.__eliteDirectiveOnkeydown) {
+          el.__eliteDirectiveOnkeydown = true
+          const methodName = el.dataset.onkeydown
+
+          el.addEventListener('keydown', e => {
+            if (typeof this[methodName] === 'function') {
+              try {
+                this[methodName](e)
+              } catch (err) {
+                console.error(`[SimpleComponent] onkeydown handler error (${methodName}):`, err)
+              }
+            }
+          })
+        }
+      })
+
+      // data-onhover="method": listener para mouse enter/leave
+      root.querySelectorAll('[data-onhover]').forEach(el => {
+        if (!el.__eliteDirectiveOnhover) {
+          el.__eliteDirectiveOnhover = true
+          const methodName = el.dataset.onhover
+
+          el.addEventListener('mouseenter', e => {
+            if (typeof this[methodName] === 'function') {
+              try {
+                this[methodName](e)
+              } catch (err) {
+                console.error(`[SimpleComponent] onhover handler error (${methodName}):`, err)
+              }
+            }
+          })
+        }
+      })
+
+      // data-onfocus="method": listener para focus events
+      root.querySelectorAll('[data-onfocus]').forEach(el => {
+        if (!el.__eliteDirectiveOnfocus) {
+          el.__eliteDirectiveOnfocus = true
+          const methodName = el.dataset.onfocus
+
+          el.addEventListener('focus', e => {
+            if (typeof this[methodName] === 'function') {
+              try {
+                this[methodName](e)
+              } catch (err) {
+                console.error(`[SimpleComponent] onfocus handler error (${methodName}):`, err)
+              }
+            }
+          })
+        }
+      })
+
+      // data-onblur="method": listener para blur events
+      root.querySelectorAll('[data-onblur]').forEach(el => {
+        if (!el.__eliteDirectiveOnblur) {
+          el.__eliteDirectiveOnblur = true
+          const methodName = el.dataset.onblur
+
+          el.addEventListener('blur', e => {
+            if (typeof this[methodName] === 'function') {
+              try {
+                this[methodName](e)
+              } catch (err) {
+                console.error(`[SimpleComponent] onblur handler error (${methodName}):`, err)
+              }
+            }
+          })
+        }
+      })
+
+      // data-onsubmit="method": listener para submit events (forms)
+      root.querySelectorAll('[data-onsubmit]').forEach(el => {
+        if (!el.__eliteDirectiveOnsubmit) {
+          el.__eliteDirectiveOnsubmit = true
+          const methodName = el.dataset.onsubmit
+
+          el.addEventListener('submit', e => {
+            if (typeof this[methodName] === 'function') {
+              try {
+                this[methodName](e)
+              } catch (err) {
+                console.error(`[SimpleComponent] onsubmit handler error (${methodName}):`, err)
+              }
+            }
+          })
+        }
+      })
+    } catch (e) {
+      console.error('[SimpleComponent] directive processing error:', e)
     }
   }
 }

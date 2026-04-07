@@ -1,0 +1,57 @@
+<div class="space-y-6 py-8">
+    <h2 class="text-2xl font-bold">Validators</h2>
+
+    <div class="bento-card">
+        <h3 class="font-semibold mb-4">Usage</h3>
+        <div class="bento-card code-card">
+            <pre class="code-content">Validators.email('user@example.com')  // null = valid
+Validators.email('invalid')           // 'Invalid email' = error
+
+// Combine multiple validators
+combineValidators(
+  Validators.required(),
+  Validators.email(),
+  Validators.noXSS()
+)</pre>
+        </div>
+    </div>
+
+    <div class="bento-card">
+        <h3 class="font-semibold mb-4">Available Validators</h3>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <span class="px-3 py-2 bg-accent/10 rounded-lg text-sm font-mono text-accent">email</span>
+            <span class="px-3 py-2 bg-cyan-500/10 rounded-lg text-sm font-mono">password</span>
+            <span class="px-3 py-2 bg-emerald-500/10 rounded-lg text-sm font-mono">phone</span>
+            <span class="px-3 py-2 bg-amber-500/10 rounded-lg text-sm font-mono">creditCard</span>
+            <span class="px-3 py-2 bg-rose-500/10 rounded-lg text-sm font-mono">url</span>
+            <span class="px-3 py-2 bg-blue-500/10 rounded-lg text-sm font-mono">ssn</span>
+            <span class="px-3 py-2 bg-purple-500/10 rounded-lg text-sm font-mono">zipcode</span>
+            <span class="px-3 py-2 bg-pink-500/10 rounded-lg text-sm font-mono">numeric</span>
+            <span class="px-3 py-2 bg-indigo-500/10 rounded-lg text-sm font-mono">noXSS</span>
+            <span class="px-3 py-2 bg-red-500/10 rounded-lg text-sm font-mono">noSQLi</span>
+            <span class="px-3 py-2 bg-teal-500/10 rounded-lg text-sm font-mono">minLength</span>
+            <span class="px-3 py-2 bg-orange-500/10 rounded-lg text-sm font-mono">maxLength</span>
+        </div>
+    </div>
+
+    <div class="bento-card" style="background: #dcfce7; border-color: #22c55e;">
+        <p class="text-sm text-green-800">
+            <strong>Security:</strong> Built-in noXSS and noSQLi validators detect common attack patterns.
+        </p>
+    </div>
+
+    <div class="bento-card">
+        <h3 class="font-semibold mb-4">Custom Validators</h3>
+        <div class="bento-card code-card">
+            <pre class="code-content">const customValidator = (value) => {
+  if (value.length < 5) {
+    return 'Value must be at least 5 characters'
+  }
+  return null // null = valid
+}
+
+const error = customValidator('hi')
+// error = 'Value must be at least 5 characters'</pre>
+        </div>
+    </div>
+</div>

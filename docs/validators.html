@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EliteUI - Validators</title>
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="index.html" class="logo">EliteUI</a>
+            <a href="index.html" style="font-size: 0.8rem; color: var(--text-secondary); text-decoration: none;">← Back</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1 style="margin-bottom: 0.5rem;">Validators</h1>
+        <p style="color: var(--text-secondary); margin-bottom: 2rem;">Security & input validation built-ins</p>
+
+        <div class="bento-grid">
+            <div class="bento-card" style="grid-column: span 6;">
+                <h3>Usage</h3>
+                <div class="code-content">
+                    <pre><span class="code-inline">Validators.email('test@mail.com')</span>  // null = valid
+<span class="code-inline">Validators.email('invalid')</span>         // 'Invalid email' = error
+
+<span class="code-inline">Validators.required()('value')</span>     // null
+<span class="code-inline">Validators.required()('')</span>          // 'This field is required'</pre>
+                </div>
+            </div>
+
+            <div class="bento-card" style="grid-column: span 6;">
+                <h3>Combine</h3>
+                <div class="code-content">
+                    <pre><span class="code-inline">combineValidators(</span>
+    Validators.required(),
+    Validators.email(),
+    Validators.noXSS()
+<span class="code-inline">)</span></pre>
+                </div>
+            </div>
+
+            <div class="bento-card" style="grid-column: span 4;">
+                <h3>Format</h3>
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">email, phone, creditCard, url, ssn, zipcode</p>
+            </div>
+
+            <div class="bento-card" style="grid-column: span 4;">
+                <h3>Security</h3>
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">noXSS, noSQLi, pattern, custom</p>
+            </div>
+
+            <div class="bento-card" style="grid-column: span 4;">
+                <h3>Password</h3>
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">min, uppercase, numbers, special chars</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="../core/Validators.js"></script>
+</body>
+</html>

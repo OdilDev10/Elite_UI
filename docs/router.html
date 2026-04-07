@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EliteUI - Router</title>
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="index.html" class="logo">EliteUI</a>
+            <a href="index.html" style="font-size: 0.8rem; color: var(--text-secondary); text-decoration: none;">← Back</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1 style="margin-bottom: 0.5rem;">Router</h1>
+        <p style="color: var(--text-secondary); margin-bottom: 2rem;">Hash-based routing with guards and middleware</p>
+
+        <div class="bento-grid">
+            <div class="bento-card" style="grid-column: span 12;">
+                <h3>Configuration (pages/router.js)</h3>
+                <div class="code-content">
+                    <pre><span class="code-inline">export default {</span>
+    routes: [
+        { path: '/', handler: 'HomePage' },
+        { path: '/example', handler: 'ExamplePage' },
+        { path: '/users/:id', handler: 'UserPage' }
+    ],
+    guards: [
+        (to, from) => {
+            if (requiresAuth(to.path) && !isLoggedIn()) {
+                router.navigate('/login')
+                return false
+            }
+            return true
+        }
+    ],
+    middleware: [
+        (path) => $debug.log('Navigating to:', path)
+    ]
+<span class="code-inline">}</span></pre>
+                </div>
+            </div>
+
+            <div class="bento-card" style="grid-column: span 6;">
+                <h3>Navigate</h3>
+                <div class="code-content">
+                    <pre><span class="code-inline">router.navigate('/users/123')</span>
+<span class="code-inline">router.back()</span>
+<span class="code-inline">router.forward()</span></pre>
+                </div>
+            </div>
+
+            <div class="bento-card" style="grid-column: span 6;">
+                <h3>Query Params</h3>
+                <div class="code-content">
+                    <pre><span class="code-inline">router.getQueryParams()</span> // { page: '1' }
+<span class="code-inline">router.setQueryParams({ page: 2 })</span>
+<span class="code-inline">router.updateQueryParam('sort', 'date')</span></pre>
+                </div>
+            </div>
+
+            <div class="bento-card" style="grid-column: span 12;">
+                <h3>Features</h3>
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">Hash-based (default) or HTML5 history • Path parameters • Query params • Navigation guards • Middleware • XSS sanitization on all params</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="../core/Router.js"></script>
+</body>
+</html>

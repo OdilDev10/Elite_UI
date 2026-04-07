@@ -19,39 +19,25 @@ class Hero extends SimpleComponent {
         }
     }
 
-    onMount() {
-        this.setupEventListeners()
-    }
-
-    setupEventListeners() {
-        // Event delegation if needed
-    }
-
-    render() {
+    async render() {
         if (!this.el) return
 
-        const { title, subtitle, buttons, onButtonClick } = this._props
+        const { title, subtitle } = this._props
 
-        // Render main structure
-        this.el.innerHTML = `
-            <div class="hero-card">
-                <div class="hero-content">
-                    <h1 class="hero-title">${title}</h1>
-                    <p class="hero-subtitle">${subtitle}</p>
-                    <div class="hero-buttons" id="hero-buttons-container"></div>
-                </div>
-            </div>
+        // Cargar template con valores dinámicos
+        this.el.innerHTML = await this.loadTemplate('Hero', { title, subtitle })
+    }
 
-            <div class="visual-card">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width: 100px; height: 100px; opacity: 0.4;">
-                    <polyline points="16 18 22 12 16 6"></polyline>
-                    <polyline points="8 6 2 12 8 18"></polyline>
-                </svg>
-            </div>
-        `
+    onMount() {
+        this.renderButtons()
+    }
 
-        // Render button components inside
+    renderButtons() {
+        const { buttons, onButtonClick } = this._props
         const buttonsContainer = this.el.querySelector('#hero-buttons-container')
+
+        if (!buttonsContainer) return
+
         buttons.forEach(btnProps => {
             const btnWrapper = document.createElement('div')
             buttonsContainer.appendChild(btnWrapper)

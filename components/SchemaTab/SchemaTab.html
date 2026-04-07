@@ -1,0 +1,61 @@
+<div class="space-y-6 py-8">
+    <h2 class="text-2xl font-bold">$schema - Mini Zod</h2>
+
+    <div class="bento-card">
+        <h3 class="font-semibold mb-4">Define Schema</h3>
+        <div class="bento-card code-card">
+            <pre class="code-content">const UserSchema = $schema({
+  name: $string().min(2).max(50).required(),
+  email: $string().email(),
+  age: $number().min(0).max(150).optional(),
+  role: $enum('admin', 'user', 'guest')
+})</pre>
+        </div>
+    </div>
+
+    <div class="bento-card">
+        <h3 class="font-semibold mb-4">Parse Data</h3>
+        <div class="bento-card code-card">
+            <pre class="code-content">const result = UserSchema.parse({
+  name: 'Juan',
+  email: 'juan@example.com',
+  role: 'user'
+})
+
+if (result.error) {
+  console.log('Errors:', result.errors)
+} else {
+  console.log('Valid!', result.data)
+}</pre>
+        </div>
+    </div>
+
+    <div class="bento-card">
+        <h3 class="font-semibold mb-4">Available Types</h3>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <span class="px-3 py-2 bg-accent/10 rounded-lg text-sm font-mono text-accent">$string()</span>
+            <span class="px-3 py-2 bg-cyan-500/10 rounded-lg text-sm font-mono">$number()</span>
+            <span class="px-3 py-2 bg-emerald-500/10 rounded-lg text-sm font-mono">$boolean()</span>
+            <span class="px-3 py-2 bg-amber-500/10 rounded-lg text-sm font-mono">$array(schema)</span>
+            <span class="px-3 py-2 bg-rose-500/10 rounded-lg text-sm font-mono">$object({})</span>
+            <span class="px-3 py-2 bg-blue-500/10 rounded-lg text-sm font-mono">$enum(...)</span>
+        </div>
+    </div>
+
+    <div class="bento-card">
+        <h3 class="font-semibold mb-4">Method Chaining</h3>
+        <div class="bento-card code-card">
+            <pre class="code-content">$string()
+  .min(2).max(50)      // Length validation
+  .email()             // Format validation
+  .required()          // Mandatory
+  .optional()          // Can be undefined/null
+
+$number()
+  .min(0).max(100)     // Range
+  .required()
+
+$enum('a', 'b', 'c')  // Enum values</pre>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EliteUI - $schema</title>
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="index.html" class="logo">EliteUI</a>
+            <a href="index.html" style="font-size: 0.8rem; color: var(--text-secondary); text-decoration: none;">← Back</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1 style="margin-bottom: 0.5rem;">$schema</h1>
+        <p style="color: var(--text-secondary); margin-bottom: 2rem;">Mini Zod for data validation</p>
+
+        <div class="bento-grid">
+            <div class="bento-card" style="grid-column: span 12;">
+                <h3>Define Schema</h3>
+                <div class="code-content">
+                    <pre><span class="code-inline">const UserSchema = $schema({</span>
+    name: $string().min(2).max(50).required(),
+    email: $string().email(),
+    age: $number().min(0).max(150).optional(),
+    role: $enum('admin', 'user', 'guest')
+<span class="code-inline">})</span></pre>
+                </div>
+            </div>
+
+            <div class="bento-card" style="grid-column: span 12;">
+                <h3>Parse Data</h3>
+                <div class="code-content">
+                    <pre><span class="code-inline">const result = UserSchema.parse({</span>
+    name: 'Juan',
+    email: 'juan@example.com',
+    role: 'user'
+<span class="code-inline">})</span>
+
+<span class="code-inline">if (result.error) {</span>
+    console.log(result.errors) // ['name must be at least 2 chars']
+<span class="code-inline">} else {</span>
+    console.log(result.data)
+<span class="code-inline">}</span></pre>
+                </div>
+            </div>
+
+            <div class="bento-card" style="grid-column: span 4;">
+                <h3>Types</h3>
+                <div class="code-content">
+                    <pre><span class="code-inline">$string()</span>
+<span class="code-inline">$number()</span>
+<span class="code-inline">$boolean()</span>
+<span class="code-inline">$array(schema)</span>
+<span class="code-inline">$object({})</span>
+<span class="code-inline">$enum(...)</span></pre>
+                </div>
+            </div>
+
+            <div class="bento-card" style="grid-column: span 8;">
+                <h3>String Rules</h3>
+                <div class="code-content">
+                    <pre><span class="code-inline">$string().min(2)</span>     // Minimum length
+<span class="code-inline">$string().max(50)</span>    // Maximum length
+<span class="code-inline">$string().email()</span>    // Valid email
+<span class="code-inline">$string().url()</span>      // Valid URL
+<span class="code-inline">$string().pattern(/regex/)</span>
+<span class="code-inline">$string().required()</span>
+<span class="code-inline">$string().optional()</span>
+<span class="code-inline">$string().default('value')</span></pre>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../core/schema.js"></script>
+</body>
+</html>

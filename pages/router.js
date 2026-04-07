@@ -19,21 +19,53 @@
 
 export default {
   routes: [
-    { 
-      path: '/', 
-      handler: 'HomePage',
-      container: '#app'
+    {
+      path: '/',
+      tab: 'overview',
+      container: '#tab-content'
     },
-    { 
-      path: '/example', 
+    {
+      path: '/components',
+      tab: 'components',
+      container: '#tab-content'
+    },
+    {
+      path: '/http',
+      tab: 'http',
+      container: '#tab-content'
+    },
+    {
+      path: '/schema',
+      tab: 'schema',
+      container: '#tab-content'
+    },
+    {
+      path: '/validators',
+      tab: 'validators',
+      container: '#tab-content'
+    },
+    {
+      path: '/debug',
+      tab: 'debug',
+      container: '#tab-content'
+    },
+    {
+      path: '/router',
+      tab: 'router',
+      container: '#tab-content'
+    },
+    {
+      path: '/example',
       handler: 'ExamplePage',
       container: '#app'
     }
   ],
 
   middleware: [
-    // Ejemplo: logging
-    // (path, state) => console.log('Navigating to:', path)
+    // Log navigation
+    (path, state) => {
+      $debug?.log?.('Navigation', { path })
+    }
   ],
 
   guards: [
